@@ -1,0 +1,27 @@
+/* Common */
+body { position: relative; padding-top: 60px; }
+/* login */
+.login { margin-top: 100px; }
+/* Shortcuts */
+.text-purple{color:#BF00BF}
+.shortcuts { margin-top: 100px; }
+a.thumbnail { text-decoration: none; }
+a.green:hover, a.green:focus { border-color: #468847;  }
+a.grey:hover, a.grey:focus { border-color: #999999;}
+a.blue:hover, a.blue:focus { border-color: #3a87ad; }
+a.purple:hover, a.purple:focus { border-color: #BF00BF; }
+/* tables */
+.table tr td { cursor: pointer; }
+.table thead tr th { background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2); background-color: #fafafa; }
+/* Forms */
+.btn-row, .input-row { margin-bottom: 15px; }
+.input-row input { margin-right: 15px; }
+.btn-unclickable { cursor: default;}
+.align-right { text-align: right; }
+.pdf { height: 600px; }
+.alert ul li { list-style-type: none; }
+.alert ul {margin: 0; padding: 0; }
+.modal { top: 30%; }
+/* jQuery-ui */
+.ui-autocomplete-loading { background: white url('../img/ui-anim_basic_16x16.gif') right center no-repeat; }
+.ui-autocomplete { max-height: 100px; overflow-y: auto; overflow-x: hidden; }

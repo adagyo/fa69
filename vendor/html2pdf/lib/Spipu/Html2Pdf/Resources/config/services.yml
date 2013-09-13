@@ -1,0 +1,3 @@
+services:
+  html2pdf:
+    class: Spipu\Html2Pdf\Html2Pdf

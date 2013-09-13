@@ -1,0 +1,17 @@
+{% extends "AdagyoUserBundle::layout.html.twig" %}
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block fos_user_content %}
+    <legend>Connexion</legend>
+    {% if error %}
+    <div class="alert alert-error"><a class="close" data-dismiss="alert" href="#">×</a>
+        {{ error|trans }}
+    </div>
+    {% endif %}
+    <form action="{{ path("fos_user_security_check") }}" method="post">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+        <input type="text" id="username" class="span4" name="_username" value="{{ last_username }}" placeholder="Login" required="required" />
+        <input type="password" id="password" class="span4" name="_password" placeholder="Mot de passe" required="required" />
+        <button type="submit" id="_submit" name="_submit" class="btn btn-info btn-block">Connexion</button>
+    </form>
+{% endblock fos_user_content %}

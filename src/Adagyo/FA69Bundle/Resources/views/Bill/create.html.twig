@@ -1,0 +1,634 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="form-actions">
+                <div class="offset1">
+                    <a id="hCustomer"   href="#" class="btn btn-unclickable span2"><i class="icon-user"></i> <strong>Client</strong></a>
+                    <a id="hCar"        href="#" class="btn btn-unclickable span2"><i class="icon-road"></i> <strong>Véhicule</strong></a>
+                    <a id="hBill"       href="#" class="btn btn-unclickable span2"><i class="icon-file"></i> <strong>Facture</strong></a>
+                    <a id="hPreview"    href="#" class="btn btn-unclickable span2"><i class="icon-eye-open"></i> <strong>Prévisualisation</strong></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+        {{ form_start(form, { 'attr' : { 'class' : 'form-horizontal', 'id' : 'fact-new-form', 'autocomplete' : 'off' } }) }}
+
+            <div id="Customer" class="offset1">
+                <div class="control-group">
+                    <label class="control-label" for="cnum">Numéro: </label>
+                    <div class="controls">
+                        {{ form_widget(form.customer.id, { 'attr' : { 'class' : 'span5 uneditable-input Customer', 'readonly' : 'true' } }) }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="cciv">Civilité: </label>
+                    <div class="controls">
+                        {{ form_widget(form.customer.civility, { 'attr' : { 'class' : 'span5 Customer' } }) }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="clname">Nom: </label>
+                    <div class="controls">
+                        {{ form_widget(form.customer.lastname, { 'attr' : { 'class' : 'span5 Customer' } }) }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="cfname">Prénom: </label>
+                    <div class="controls">
+                        {{ form_widget(form.customer.firstname, { 'attr' : { 'class' : 'span5 Customer' } }) }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="cstreet">Adresse: </label>
+                    <div class="controls">
+                        {{ form_widget(form.customer.address, { 'attr' : { 'class' : 'span5 Customer' } }) }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="ccp">Code postal: </label>
+                    <div class="controls">
+                        {{ form_widget(form.customer.postalcode, { 'attr' : { 'class' : 'span5 Customer' } }) }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="ccity">Ville: </label>
+                    <div class="controls">
+                        {{ form_widget(form.customer.city, { 'attr' : { 'class' : 'span5 Customer' } }) }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="cphone">Téléphone: </label>
+                    <div class="controls">
+                        {{ form_widget(form.customer.phone, { 'attr' : { 'class' : 'span5 Customer' } }) }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="cmobile">Portable: </label>
+                    <div class="controls">
+                        {{ form_widget(form.customer.mobile, { 'attr' : { 'class' : 'span5 Customer' } }) }}
+                    </div>
+                </div>
+             </div>
+            <!-- End of customer's frm -->
+
+            <!-- Start of car's FRM -->
+            <div id="Car" class="offset1">
+                {{ form_widget(form.car.id, { 'attr' : { 'class' : 'Customer Car' } }) }}
+                <div class="control-group">
+                    <label class="control-label">Immatriculation: </label>
+                    <div class="controls">
+                        {{ form_widget(form.car.regPlate, { 'attr' : { 'class' : 'span5 Customer Car' } }) }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="clname">Marque: </label>
+                    <div class="controls">
+                        {{ form_widget(form.car.brand, { 'attr' : { 'class' : 'span5 Customer Car' } }) }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="cfname">Année: </label>
+                    <div class="controls">
+                        {{ form_widget(form.car.year, { 'attr' : { 'class' : 'span5 Customer Car' } }) }}
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" for="cstreet">Kilométrage: </label>
+                    <div class="controls">
+                        {{ form_widget(form.car.mileage, { 'attr' : { 'class' : 'span5 Customer Car' } }) }}
+                    </div>
+                </div>
+            </div>
+            <!-- End of car's FRM -->
+
+            <!-- Start of bill's FRM -->
+            <div id="Bill">
+                {{ form_widget(form.carMileage) }}
+                <div class="input-row offset1">
+                    {{ form_widget(form.date, { 'attr' : { 'class' : 'uneditable-input span3 Customer Car Bill', 'placeholder' : 'Date de facturation' } }) }}
+                    {{ form_widget(form.settlementDate, { 'attr' : { 'class' : 'span3 Customer Car Bill', 'placeholder' : 'Date de règlement' } }) }}
+                    {{ form_widget(form.paymentMethod, { 'attr' : { 'class' : 'span3 Customer Car Bill', 'placeholder' : 'Mode de règlement'  } }) }}
+                </div>
+
+                <table class="table table-striped table-bordered table-condensed" id="fact-new-table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Qté</th>
+                            <th>Libellé</th>
+                            <th>N / O</th>
+                            <th>Remise</th>
+                            <th>PU TTC</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for line in form.lines %}
+                            <tr>
+                                <td>{{ form_widget(line.number, { 'attr' : { 'class' : '' } }) }} {{ loop.index }}</td>
+                                <td>{{ form_widget(line.quantity, { 'attr' : { 'class' : 'span1 quantity', 'data-line' : loop.index0 } }) }}</td>
+                                <td>{{ form_widget(line.lineLabel, { 'attr' : { 'class' : 'span7' } }) }}</td>
+                                <td>{{ form_widget(line.quality, { 'attr' : { 'class' : 'span1 quality', 'data-line' : loop.index0 } }) }}</td>
+                                <td>
+                                    <div class="input-append">
+                                        {{ form_widget(line.discount, { 'attr' : { 'class': 'span1 discount', 'data-line' : loop.index0 } }) }}
+                                        <span class="add-on">%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-append">
+                                        {{ form_widget(line.unitPriceVAT, { 'attr' : { 'class': 'span1 unitPriceVAT', 'data-line' : loop.index0 } }) }}
+                                        <span class="add-on">€</span>
+                                    </div>
+                                </td>
+                                <td><i class="icon-trash" data-line="{{ loop.index0 }}"></i></td>
+                            </tr>
+                        {% endfor %}
+                            <tr>
+                                <td colspan="3">Total HT Pièces NEUVES, MONTAGE et FRAIS DE PORT:</td>
+                                <td colspan="3"><div class="input-append">{{ form_widget(form.totalExVATNewPart, { 'attr' : { 'class' : 'uneditable-input span3 Customer Car Bill align-right' } }) }}<span class="add-on">€</span></div>                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">TVA 19,6 % sur pièces NEUVES, MONTAGE et FRAIS DE PORT:</td>
+                                <td colspan="3"><div class="input-append">{{ form_widget(form.VAT, { 'attr' : { 'class' : 'uneditable-input span3 Customer Car Bill align-right' } }) }}<span class="add-on">€</span></div>                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Total TTC Pièces NEUVES, MONTAGE et FRAIS DE PORT:</td>
+                                <td colspan="3"><div class="input-append">{{ form_widget(form.totalVATNewPart, { 'attr' : { 'class' : 'uneditable-input span3 Customer Car Bill align-right' } }) }}<span class="add-on">€</span></div>                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Total pièces OCCASION (Non soumises à TVA):</td>
+                                <td colspan="3"><div class="input-append">{{ form_widget(form.totalExVATOldPart, { 'attr' : { 'class' : 'uneditable-input span3 Customer Car Bill align-right' } }) }}<span class="add-on">€</span></div>                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Montant total en €uro de la REMISE:</td>
+                                <td colspan="3"><div class="input-append">{{ form_widget(form.totalDiscount, { 'attr' : { 'class' : 'uneditable-input span3 Customer Car Bill align-right' } }) }}<span class="add-on">€</span></div>                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3"><b>TOTAL NET A PAYER EN €UROS:</b></td>
+                                <td colspan="3"><div class="input-append">{{ form_widget(form.totalAmount, { 'attr' : { 'class' : 'uneditable-input span3 Customer Car Bill align-right' } }) }}<span class="add-on">€</span></div>                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </div>
+            <!-- End of bill's FRM -->
+
+            <!-- Start of preview's FRM -->
+            <div id="Preview" class="row offset1">
+                <iframe id="ifPreview" class="pdf span9" src=""></iframe>
+            </div>
+            <!-- End of preview's FRM -->
+        {{ form_end(form) }}
+        </div>
+
+        <div class="row">
+            <div class="form-actions">
+                <a href="#" class="btn btn-success span2 disabled" type="button" id="prev" title="Passe à l'étape suivante"><i class="icon-backward icon-white"></i> Précédent</a>
+                <a href="#" class="btn btn-info span2" type="button" id="save" title="Enregistre un nouveau client"><i class="icon-check icon-white"></i> <span>Nouveau</span></a>
+                <a href="#" class="btn btn-warning span2" type="button" id="edit" title="mets à jour le client sélectionné"><i class="icon-edit icon-white"></i> <span>Mise à jour</span></a>
+                <a href="#" class="btn btn-danger span2" type="button" id="reset" title="Réinitialise le formulaire"><i class="icon-remove icon-white"></i> Réinitialiser</a>
+                <a href="#" class="btn btn-success span2" type="button" id="next" title="Passe à l'étape suivante"><span>Suivant</span> <i class="icon-forward icon-white"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- modals -->
+    <div id="modalMsg" class="modal hide">
+        <div class="modal-header"><h3>Enregistrement en cours...</h3></div>
+        <div class="modal-body">
+            <div id="modal-content-init"><div class="progress progress-info progress-striped active"><div class="bar" style="width: 100%">Veuillez patienter</div></div></div>
+            <div id="modal-content-ok"><div class="alert alert-success">Client enregistré avec succès</div></div>
+            <div id="modal-content-ko"><div class="alert alert-error">errors</div></div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" id="btn-close" data-dismiss="modal" aria-hidden="true">Fermer</a>
+        </div>
+    </div>
+
+    <!-- print modal -->
+    <div id="printableBill" class="modal hide">
+        <div class="modal-header"><h3>Facture n°</h3></div>
+        <div class="modal-body">
+            <iframe id="iPrintable" src="" style="width: 100%; height: 200px"></iframe>
+        </div>
+        <div class="modal-footer">
+            <a class="btn btn-info" id="print"><i class="icon-print icon-white"></i> Imprimer</a>
+            <a class="btn btn-warning" id="btn-close" data-dismiss="modal" aria-hidden="true">Modifier la facture</a>
+            <a class="btn btn-success" id="done"><i class="icon-ok icon-white"></i> Terminer</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function () {
+            var civilities = ['Madame', 'Mademoiselle', 'Monsieur', 'Société'];
+            var methods = ['Espèce', 'Chèque', 'CB', 'Top 3'];
+
+            var quals = ['Neuf', 'Occasion'];
+            var selected_cars = [];
+            var currentStep = goToStep('_', 'Customer');
+
+            initModal();
+            $('#Car').hide();
+            $('#Bill').hide();
+            $('#Preview').hide();
+
+            $('#{{ form.customer.lastname.vars.id }}').focus();
+            $('.btn-unclickable').click(function (e) { e.preventDefault(); });
+            $('#modalMsg').modal({ keyboard: false, backdrop: 'static', show: false });
+            $('#modalMsg').on('hidden', function() { initModal(); });
+            $('#printableBill').modal({ keyboard: true, backdrop: 'static', show: false, width: 800, height: 500 });
+            $('#{{ form.customer.civility.vars.id }}').autocomplete({ source: civilities, minLength: 0, autoFocus: true });
+            $('#{{ form.customer.civility.vars.id }}').on('focus', function(e) {$('#{{ form.customer.civility.vars.id }}').autocomplete("search",""); });
+
+            $('#{{ form.car.mileage.vars.id }}').on('change', function(e) { $('#{{ form.carMileage.vars.id }}').val($(this).val()); });
+
+            $('#{{ form.customer.lastname.vars.id }}').autocomplete({
+                source: function( request, response ) {
+                    $.ajax({
+                        url: "{{ path('ajax_customer') }}",
+                        dataType: "json",
+                        data: {
+                            field: "lastname",
+                            search: $('#{{ form.customer.lastname.vars.id }}').val()
+                        },
+                        success: function( data ) {
+                            response( $.map( data.customers, function( item ) {
+                                return {
+                                    label: item.lastname + " " + item.firstname,
+                                    value: item.lastname,           id: item.id,
+                                    civility: item.civility,        lastname: item.lastname,
+                                    firstname: item.firstname,      address: item.address,
+                                    postalcode: item.postalcode,    city: item.city,
+                                    phone: item.phone,              mobile: item.mobile,
+                                    selected_cars: item.cars
+                                }
+                            }));
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function(event, ui) { fillForm(ui); }
+            });
+
+            $('#{{ form.car.regPlate.vars.id }}').autocomplete({
+                source: function(request, response) {
+                    var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+                    response($.map(selected_cars, function (item) {
+                        if ( !request.term || matcher.test(item.reg_plate)) {
+                            return {
+                                value: item.reg_plate,
+                                label: item.reg_plate + " (" + item.brand + ")",
+                                brand: item.brand,
+                                year: item.year,
+                                mileage: item.mileage,
+                                regPlate: item.reg_plate,
+                                id: item.id
+                            };
+                        }
+                    }))
+                },
+                minLength: 0,
+                autoFocus: true,
+                select: function(event, ui) { fillForm(ui); }
+            });
+            $('#{{ form.car.regPlate.vars.id }}').on('focus', function(e) {$('#{{ form.car.regPlate.vars.id }}').autocomplete("search",""); });
+
+            $('#{{ form.date.vars.id }}').datepicker({ changeMonth: true, changeYear: true, regional: "fr", showButtonPanel: true }).val(_getDate());
+
+            $('#{{ form.paymentMethod.vars.id }}').autocomplete({ source: methods, minLength: 0, autoFocus: true });
+            $('#{{ form.paymentMethod.vars.id }}').on('focus', function(e) {$('#{{ form.paymentMethod.vars.id }}').autocomplete("search",""); });
+
+            $('.quality').autocomplete({ source: quals, minLength: 0, autoFocus: true });
+            $('.quality').on('focus', function(e) {$(this).autocomplete("search",""); });
+
+            $('#print').on('click', function(e) { window.frames['iPrintable'].focus(); window.frames['iPrintable'].print();});
+            $('#done').on('click', function(e) { window.location.href = '{{ path('homepage') }}'; });
+
+            {% for i in 0..16 %}
+            $('#adagyo_fa69bundle_billtype_lines_{{ i }}_lineLabel').autocomplete({
+                minLength: 3, autoFocus: false,
+                source: function( request, response ) {
+                    $.ajax({ url: "{{ path('ajax_product') }}", dataType: "json", data: { search: $('#adagyo_fa69bundle_billtype_lines_{{ i }}_lineLabel').val() },
+                        success: function( data ) {response( $.map( data.lines, function( item ) { return { value: item.lineLabel } })); } }); }
+            });
+            {% endfor %}
+
+            $('.quality').on('blur', function(e) { compute(); return false; });
+            $('.quantity').on('blur', function(e) { compute(); return false; });
+            $('.discount').on('blur', function(e) { compute(); return false; });
+            $('.unitPriceVAT').on('blur', function(e) { compute(); return false; });
+
+            function compute() {
+                var totalExVATNewPart = 0;
+                var totalVATNewPart = 0;
+                var totalExVATOldPart = 0;
+                var totalDiscount = 0;
+                var VAT = 0;
+                var totalAmount = 0;
+
+                for(i = 0; i < 18; i++) {
+                    quality   = $('#adagyo_fa69bundle_billtype_lines_'+ i + '_quality').val();
+                    quantity  = $('#adagyo_fa69bundle_billtype_lines_'+ i + '_quantity').val();
+                    discount  = $('#adagyo_fa69bundle_billtype_lines_'+ i + '_discount').val();
+                    unitprice = $('#adagyo_fa69bundle_billtype_lines_'+ i + '_unitPriceVAT').val();
+
+                    if(quantity > 0) {
+                        lineTotal = (unitprice * (1 - discount / 100)) * quantity;
+                        totalAmount += lineTotal;
+                        totalDiscount += (unitprice * quantity) - lineTotal;
+                        if(quality == 'Neuf') {
+                            totalVATNewPart += lineTotal;
+                            lineExVATTotal = lineTotal / 1.196; // TODO Parametriser la VAT
+                            totalExVATNewPart += lineExVATTotal;
+                            VAT += lineTotal - lineExVATTotal;
+                        } else {
+                            totalExVATOldPart += lineTotal;
+                        }
+                    }
+                }
+
+                $('#{{ form.totalExVATNewPart.vars.id }}').val(Math.round(totalExVATNewPart*100)/100);
+                $('#{{ form.totalVATNewPart.vars.id }}').val(Math.round(totalVATNewPart*100)/100);
+                $('#{{ form.totalExVATOldPart.vars.id }}').val(Math.round(totalExVATOldPart*100)/100);
+                $('#{{ form.totalDiscount.vars.id }}').val(Math.round(totalDiscount*100)/100);
+                $('#{{ form.VAT.vars.id }}').val(Math.round(VAT*100)/100);
+                $('#{{ form.totalAmount.vars.id }}').val(Math.round(totalAmount*100)/100);
+            }
+
+            resetBill();
+            $('.icon-trash').click(function (e) { e.preventDefault(); resetLine($(this).attr('data-line')); });
+
+            function fillForm(ui) {
+                switch(currentStep) {
+                    case 'Customer':
+                        $('#{{ form.customer.id.vars.id }}').val(ui.item.id);              $('#{{ form.customer.civility.vars.id }}').val(ui.item.civility);
+                        $('#{{ form.customer.lastname.vars.id }}').val(ui.item.lastname);  $('#{{ form.customer.firstname.vars.id }}').val(ui.item.firstname);
+                        $('#{{ form.customer.address.vars.id }}').val(ui.item.address);    $('#{{ form.customer.postalcode.vars.id }}').val(ui.item.postalcode);
+                        $('#{{ form.customer.city.vars.id }}').val(ui.item.city);          $('#{{ form.customer.phone.vars.id }}').val(ui.item.phone);
+                        $('#{{ form.customer.mobile.vars.id }}').val(ui.item.mobile);
+                        selected_cars = ui.item.selected_cars;
+
+                        $('#{{ form.car.regPlate.vars.id }}').val(selected_cars[0].reg_plate);
+                        $('#{{ form.car.id.vars.id }}').val(selected_cars[0].id);
+                        $('#{{ form.car.brand.vars.id }}').val(selected_cars[0].brand);
+                        $('#{{ form.car.mileage.vars.id }}').val(selected_cars[0].mileage);
+                        $('#{{ form.car.year.vars.id }}').val(selected_cars[0].year);
+
+                        $('#{{ form.carMileage.vars.id }}').val(selected_cars[0].mileage);
+
+                        $('#next').focus();
+                        break;
+                    case 'Car':
+                        $('#{{ form.car.id.vars.id }}').val(ui.item.id);            $('#{{ form.car.regPlate.vars.id }}').val(ui.item.regPlate);
+                        $('#{{ form.car.brand.vars.id }}').val(ui.item.brand);      $('#{{ form.car.year.vars.id }}').val(ui.item.year);
+                        $('#{{ form.car.mileage.vars.id }}').val(ui.item.mileage);  $('#{{ form.carMileage.vars.id }}').val(ui.item.mileage);
+                        break;
+                }
+            }
+
+            function ajaxRequest(postUrl) {
+                switch(currentStep) {
+                    case 'Customer':
+                        $.ajax({
+                            type: 'POST',
+                            url: postUrl,
+                            dataType: "json",
+                            cache: false,
+                            data: {
+                                id          : $('#{{ form.customer.id.vars.id }}').val(),
+                                civility    : $('#{{ form.customer.civility.vars.id }}').val(),
+                                lastname    : $('#{{ form.customer.lastname.vars.id }}').val(),
+                                firstname   : $('#{{ form.customer.firstname.vars.id }}').val(),
+                                address     : $('#{{ form.customer.address.vars.id }}').val(),
+                                postalcode  : $('#{{ form.customer.postalcode.vars.id }}').val(),
+                                city        : $('#{{ form.customer.city.vars.id }}').val(),
+                                phone       : $('#{{ form.customer.phone.vars.id }}').val(),
+                                mobile      : $('#{{ form.customer.mobile.vars.id }}').val()
+                            },
+                            success: function(data) {
+                                $('#{{ form.customer.id.vars.id }}').val(data.id);
+                                successModal();
+                            },
+                            error: function(jqXHR) {
+                                $('#modal-content-ko > .alert').html('');
+                                var errors = $.parseJSON(jqXHR.responseText);
+                                for( var i = 0; i < errors['errors'].length; i++) { $('#modal-content-ko > .alert').append(errors['errors'][i].message + "<br />"); }
+                                errorModal();
+                            }
+                        });
+                        break;
+                    case 'Car':
+                        $.ajax({
+                            type: 'POST',
+                            url: postUrl,
+                            dataType: "json",
+                            cache: false,
+                            data: {
+                                id          : $('#{{ form.car.id.vars.id }}').val(),
+                                regPlate    : $('#{{ form.car.regPlate.vars.id }}').val(),
+                                customerId  : $('#{{ form.customer.id.vars.id }}').val(),
+                                brand       : $('#{{ form.car.brand.vars.id }}').val(),
+                                year        : $('#{{ form.car.year.vars.id }}').val(),
+                                mileage     : $('#{{ form.car.mileage.vars.id }}').val()
+                            },
+                            success: function(data) {
+                                $('#{{ form.car.id.vars.id }}').val(data.id);
+                                successModal();
+                            },
+                            error: function(jqXHR) {
+                                $('#modal-content-ko > .alert').html('');
+                                var errors = $.parseJSON(jqXHR.responseText);
+                                for( var i = 0; i < errors['errors'].length; i++) { $('#modal-content-ko > .alert').append(errors['errors'][i].message + "<br />"); }
+                                errorModal();
+                            }
+                        });
+                        break;
+                    case 'Bill':
+                        var billLines = getBillLines();
+                        $.ajax({
+                            type: 'POST',
+                            url: postUrl,
+                            dataType: "text",
+                            cache: false,
+                            data: {
+                                customerId          : $('#{{ form.customer.id.vars.id }}').val(),
+                                carId               : $('#{{ form.car.id.vars.id }}').val(),
+                                date                : $('#{{ form.date.vars.id }}').val(),
+                                settlementDate      : $('#{{ form.settlementDate.vars.id }}').val(),
+                                paymentMethod      : $('#{{ form.paymentMethod.vars.id }}').val(),
+                                lines               : billLines,
+                                totalExVATNewPart   : $('#{{ form.totalExVATNewPart.vars.id }}').val(),
+                                totalVATNewPart     : $('#{{ form.totalVATNewPart.vars.id }}').val(),
+                                totalExVATOldPart   : $('#{{ form.totalExVATOldPart.vars.id }}').val(),
+                                totalDiscount       : $('#{{ form.totalDiscount.vars.id }}').val(),
+                                VAT                 : $('#{{ form.VAT.vars.id }}').val(),
+                                totalAmount         : $('#{{ form.totalAmount.vars.id }}').val()
+                            },
+                            success: function(data) {
+                                $('#ifPreview').attr('src',data);
+                                $('#modalMsg').modal('hide');
+                            },
+                            error: function(error) {
+                                errorModal(error);
+                            }
+                        });
+                        break;
+                    case 'Preview':
+                        var billLines = getBillLines();
+                        $.ajax({
+                            type: 'POST',
+                            url: postUrl,
+                            dataType: "json",
+                            cache: false,
+                            data: {
+                                billId              : $('#{{ form.id.vars.id }}').val(),
+                                customerId          : $('#{{ form.customer.id.vars.id }}').val(),
+                                carId               : $('#{{ form.car.id.vars.id }}').val(),
+                                date                : $('#{{ form.date.vars.id }}').val(),
+                                settlementDate      : $('#{{ form.settlementDate.vars.id }}').val(),
+                                paymentMethod      : $('#{{ form.paymentMethod.vars.id }}').val(),
+                                lines               : billLines,
+                                totalExVATNewPart   : $('#{{ form.totalExVATNewPart.vars.id }}').val(),
+                                totalVATNewPart     : $('#{{ form.totalVATNewPart.vars.id }}').val(),
+                                totalExVATOldPart   : $('#{{ form.totalExVATOldPart.vars.id }}').val(),
+                                totalDiscount       : $('#{{ form.totalDiscount.vars.id }}').val(),
+                                VAT                 : $('#{{ form.VAT.vars.id }}').val(),
+                                totalAmount         : $('#{{ form.totalAmount.vars.id }}').val()
+                            },
+                            success: function(data) {
+                                $('#modalMsg').modal('hide');
+                                $('#iPrintable').attr('src',data.billPdf);
+                                $('#printableBill').modal('show');
+                                $('#{{ form.id.vars.id }}').val(data.billId);
+                                $('#printableBill .modal-header h3').html('Facture n°'+data.billId);
+                            },
+                            error: function(error) {
+                                errorModal(error);
+                            }
+                        });
+                        break;
+                }
+
+            }
+
+            $('#prev').click(function (e){
+                e.preventDefault();
+                switch(currentStep) {
+                    case 'Car':
+                        currentStep = goToStep(currentStep, 'Customer');
+                        break;
+                    case 'Bill':
+                        currentStep = goToStep(currentStep, 'Car');
+                        break;
+                    case 'Preview':
+                        currentStep = goToStep(currentStep, 'Bill');
+                        break;
+                }
+            });
+
+            $('#save').click(function (e){
+                e.preventDefault();
+                switch(currentStep) {
+                    case 'Customer':
+                        $('#modalMsg').modal('show');
+                        if($('#{{ form.customer.id.vars.id }}').val() != '') { errorModal('La duplication de client est interdite, veuillez cliquer sur le bouton de mise à jour si vous souhaitez modifier ses informations.'); }
+                        else { ajaxRequest('{{ path('ajax_customer_save') }}'); }
+                        break;
+                    case 'Car':
+                        $('#modalMsg').modal('show');
+                        if($('#{{ form.car.id.vars.id }}').val() != '') { errorModal('La duplication de véhicule est interdite, veuillez cliquer sur le bouton de mise à jour si vous souhaitez modifier ses informations.'); }
+                        else {
+                            ajaxRequest('{{ path('ajax_car_save') }}');
+                            selected_cars.push({
+                                id          : $('#{{ form.car.id.vars.id }}').val(),
+                                reg_plate   : $('#{{ form.car.regPlate.vars.id }}').val(),
+                                brand       : $('#{{ form.car.brand.vars.id }}').val(),
+                                year        : $('#{{ form.car.year.vars.id }}').val(),
+                                mileage     : $('#{{ form.car.mileage.vars.id }}').val()
+                            });
+                        }
+                        break;
+                }
+            });
+
+            $('#edit').click(function (e){
+                e.preventDefault();
+                switch(currentStep) {
+                    case 'Customer':
+                        $('#modalMsg').modal('show');
+                        if($('#{{ form.customer.id.vars.id }}').val() != '') { ajaxRequest('{{ path('ajax_customer_edit') }}'); }
+                        else { errorModal('Veuillez selectionner le client à mettre à jour.'); }
+                        break;
+                    case 'Car':
+                        $('#modalMsg').modal('show');
+                        if($('#{{ form.car.id.vars.id }}').val() != '') {
+                            ajaxRequest('{{ path('ajax_car_edit') }}');
+                            for(i = 0; i < selected_cars.length; i++) {
+                                if(selected_cars[i].id == $('#{{ form.car.id.vars.id }}').val()) {
+                                    selected_cars[i].reg_plate   = $('#{{ form.car.regPlate.vars.id }}').val(),
+                                    selected_cars[i].brand       = $('#{{ form.car.brand.vars.id }}').val(),
+                                    selected_cars[i].year        = $('#{{ form.car.year.vars.id }}').val(),
+                                    selected_cars[i]. mileage    = $('#{{ form.car.mileage.vars.id }}').val()
+                                }
+                            }
+                        }
+                        else { errorModal('Veuillez selectionner le véhicule à mettre à jour.'); }
+                        break;
+                }
+            });
+
+            $('#reset').click(function(e) { e.preventDefault(); $('.'+currentStep).val(''); if(currentStep == 'Customer') { selected_cars.length = 0; } else if(currentStep == 'Bill') { resetBill(); $('#{{ form.date.vars.id }}').val(_getDate()) } });
+
+            $('#next').click(function(e) {
+                e.preventDefault();
+                switch(currentStep) {
+                    case 'Customer':
+                        if($('#{{ form.customer.id.vars.id }}').val() != '') { currentStep = goToStep(currentStep, 'Car'); $('#{{ form.car.regPlate.vars.id }}').focus(); }
+                        else { $('#modalMsg').modal('show'); errorModal('Veuillez selectionner/sauvegarder le client pour continuer.'); }
+                    break;
+                    case 'Car':
+                        if($('#{{ form.car.id.vars.id }}').val() != '') { currentStep = goToStep(currentStep, 'Bill');  }
+                        else { $('#modalMsg').modal('show'); errorModal('Veuillez selectionner/sauvegarder le véhicule pour continuer.'); $('#{{ form.car.regPlate.vars.id }}').focus();}
+                    break;
+                    case 'Bill':
+                        nbLines = 0;
+                        for(i = 0; i <= 17; i++) { nbLines += ($('#adagyo_fa69bundle_billtype_lines_' + i + '_quantity').val() > 0 ? 1 : 0); }
+                        if(nbLines > 0) {
+                            $('#modalMsg').modal('show');
+                            ajaxRequest('{{ path('ajax_bill_preview') }}');
+                            currentStep = goToStep(currentStep, 'Preview');
+                        }
+                        else { $('#modalMsg').modal('show'); errorModal('Veuillez au moins ajouter une ligne à la facture.'); }
+                    break;
+                    case 'Preview':
+                        $('#modalMsg').modal('show');
+                        ajaxRequest('{{ path('ajax_bill_save') }}');
+                    break;
+                }
+            });
+
+        });
+    </script>
+{%  endblock %}

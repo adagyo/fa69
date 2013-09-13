@@ -1,0 +1,9 @@
+parameters:
+#    adagyo_user.example.class: Adagyo\UserBundle\Example
+
+services:
+    fa69_user.change_password:
+        class: Adagyo\UserBundle\EventListener\ChangePasswordListener
+        arguments: [ @router ]
+        tags:
+            - { name: kernel.event_subscriber }

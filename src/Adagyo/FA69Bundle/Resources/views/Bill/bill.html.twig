@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}!!! NE PAS IMPRIMER !!!{% endblock %}</title>
+    <meta charset="UTF-8">
+
+</head>
+
+<body>
+    <style type="text/css">
+        table { vertical-align: top; } tr    { vertical-align: top; } td    { vertical-align: top; } th { vertical-align: middle; font-weight: bold; text-align: center; border-bottom: 1px solid #000000; }
+        .bAll { border: 1px solid #000000; }
+        .bRight { border-right: 1px solid #000000; }
+        .bBottom { border-bottom: 1px solid #000000; }
+        .p1 { padding-bottom: 1mm; padding-top: 1mm}
+        .preview { background: url({{ app.request.schemeAndHttpHost }}{{ asset('img/Specimen.jpg') }}) center center no-repeat; }
+    </style>
+    <table cellpadding="0" cellspacing="0">
+        <tr>
+            <td style="padding-top: 5mm; width: 125mm">
+                <b>Facture n° {{ billId }}</b><br /><br />
+                <i>Marque:</i> {{ car.brand }}<br />
+                <i>Immatriculation:</i> {{ car.regPlate }}<br />
+                <i>Année:</i> {{ car.year }}<br />
+                <i>Kilométrage:</i> {{ car.mileage }} km
+            </td>
+            <td style="width: 69mm">
+                {{ customer.civility }} {{ customer.firstname }} {{ customer.lastname }}<br />
+                {{ customer.address|nl2br }}<br />
+                {{ customer.postalcode }} {{ customer.city }}
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-top: 2mm; width: 100mm"><i>Téléphone:</i> {{ customer.phone }} / {{ customer.mobile }}</td>
+            <td style="padding-top: 2mm; width: 75mm">St Bonnet de Mûre le {{ date }}</td>
+        </tr>
+        <tr><td colspan="2" style="height: 2mm"></td></tr>
+        <tr>
+            <td colspan="2">
+                <table style="width: 100%;" class="bAll{% if preview == true %} preview{% endif %}" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <th style="width: 9mm;" class="bRight bBottom p1">Qte</th>
+                        <th style="width: 117mm;" class="bRight bBottom p1">Désignation</th>
+                        <th style="width: 16mm;" class="bRight bBottom p1">Prix Unit. HT</th>
+                        <th style="width: 16mm;" class="bRight bBottom p1">Prix Unit. TTC</th>
+                        <th style="width: 16mm;" class="bRight bBottom p1">Remise %</th>
+                        <th style="width: 18mm;" class="bBottom p1">Prix Tot. TTC</th>
+                    </tr>
+                    {% for i in 0..16 %}
+                    <tr>
+                        <td style="text-align: center;" class="bRight p1">{% if  lines[i].quantity > 0 %}{{ lines[i].quantity }}{% else %}&nbsp;{% endif %}</td>
+                        <td style="text-align: left; width: 117mm" class="bRight p1">{{ lines[i].lineLabel }}</td>
+                        <td style="text-align: right;" class="bRight p1">{% if  (lines[i].quantity > 0) and (lines[i].quality == 'Neuf') %}{{ (lines[i].unitPriceVAT / 1.196)|number_format(2,',','')  }}{% endif %}</td>
+                        <td style="text-align: right;" class="bRight p1">{% if  lines[i].quantity > 0 %}{{ lines[i].unitPriceVAT|number_format(2,',','') }}{% endif %}</td>
+                        <td style="text-align: right;" class="bRight p1">{% if  lines[i].quantity > 0 %}{{ lines[i].discount|number_format(2,',','') }}{% endif %}</td>
+                        <td style="text-align: right;" class="p1">{% if  lines[i].quantity > 0 %}{{ (lines[i].quantity * (lines[i].unitPriceVAT * (1 - lines[i].discount / 100)))|number_format(2,',','') }}{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </td>
+        </tr>
+        <tr><td colspan="2" style="height: 3mm"></td></tr>
+        <tr>
+            <td colspan="2" style="padding-left: 11mm">
+                <table style="width: 168mm" class="bAll" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td style="width: 154mm" class="bBottom bRight">Total HT Pièces NEUVES, MONTAGE et FRAIS DE PORT</td>
+                        <td style="text-align: right; width: 28mm" class="bBottom">{{ totalExVATNewPart|number_format(2,',','') }} €</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 154mm" class="bBottom bRight">TVA 19,6 % sur pièces NEUVES, MONTAGE et FRAIS DE PORT</td>
+                        <td style="text-align: right; width: 28mm" class="bBottom">{{ VAT|number_format(2,',','') }} €</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 154mm" class="bBottom bRight">Total TTC Pièces NEUVES, MONTAGE et FRAIS DE PORT</td>
+                        <td style="text-align: right; width: 28mm" class="bBottom">{{ totalVATNewPart|number_format(2,',','') }} €</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 154mm" class="bBottom bRight">Total pièces OCCASION ( Non soumises à TVA )</td>
+                        <td style="text-align: right; width: 28mm" class="bBottom">{{ totalExVATOldPart|number_format(2,',','') }} €</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 154mm" class="bBottom bRight">Montant total en €uro de la REMISE</td>
+                        <td style="text-align: right; width: 28mm" class="bBottom">{{ totalDiscount|number_format(2,',','') }} €</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 154mm" class="bBottom bRight">TOTAL NET A PAYER EN €UROS</td>
+                        <td style="text-align: right; width: 28mm" class="bBottom">{{ totalAmount|number_format(2,',','') }} €</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 154mm" class="bRight">MODE DE REGLEMENT</td>
+                        <td style="text-align: right; width: 28mm" class="">{{ paymentMethod }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr><td colspan="2" style="height: 3mm"></td></tr>
+        <tr><td colspan="2">{% if settlementDate != '' %}Règlement souhaité au: {{ settlementDate }}{% endif %}</td></tr>
+    </table>
+</body>
+</html>

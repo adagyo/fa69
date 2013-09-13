@@ -1,0 +1,123 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row offset1 span7">
+            <form class="form-horizontal" action="#" id="searchFrm">
+                <fieldset>
+                    <legend>Rechercher une facture <i class="icon-chevron-down" id="showHide" title="Afficher/Masquer le formulaire de recherche"></i> </legend>
+                    <div id="frm">
+                        <div class="control-group">
+                            <label class="control-label" for="billId">Numéro: </label>
+                            <div class="controls">
+                                <input type="number" id="billId" class="span4">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="customer">Client: </label>
+                            <div class="controls">
+                                <input type="text" id="customer" class="span4">
+                                <input type="hidden" id="customerId" value="">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="dateFrom">Date (à partir du): </label>
+                            <div class="controls">
+                                <input type="text" id="dateFrom" class="span4">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="dateTo">Date (jusqu'au): </label>
+                            <div class="controls">
+                                <input type="text" id="dateTo" class="span4">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <a class="btn btn-danger span2" id="reset"><i class="icon-remove icon-white"></i> Réinitialiser</a>
+                            <a class="btn btn-success span2" id="search"><i class="icon-search icon-white"></i> Chercher</a>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        <div class="row">
+            <table class="table table-striped table-bordered table-condensed">
+                <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Date</th>
+                        <th>Client</th>
+                        <th>Montant total</th>
+                    </tr>
+                </thead>
+                <tbody id="searchResults">
+                    <tr>
+                        <td colspan="4">Aucun résultats</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function () {
+            $('#billId').numeric({ negative: false });
+            $('#dateFrom').datepicker({ changeMonth: true, changeYear: true, regional: "fr", showButtonPanel: true });
+            $('#dateTo').datepicker({ changeMonth: true, changeYear: true, regional: "fr", showButtonPanel: true });
+            $('#reset').on('click', function(e) { document.forms[0].reset(); });
+            $('#showHide').on('click', function(e) { $('#frm').slideToggle(); $(this).toggleClass('icon-chevron-down icon-chevron-right'); });
+            $('#search').on('click', function(e) {
+                $.ajax({
+                    url: "{{ path('ajax_bill_search') }}",
+                    dataType: "json",
+                    method: "POST",
+                    data: {
+                        billId  : $('#billId').val(),
+                        customerId : $('#customerId').val(),
+                        dateFrom : $('#dateFrom').val(),
+                        dateTo : $('#dateTo').val()
+                    },
+                    success: function(data) {
+                        /*response($.map(data.results, function(item) {
+                            return {
+
+                            }
+                        }));*/
+                        /*$.map(data.results, function(item) {
+                            console.log(item.id);
+                        });*/
+                        console.log(data.results.length);
+                        console.log(data);
+                    }
+                });
+            });
+
+            $('#customer').autocomplete({
+                source: function( request, response ) {
+                    $.ajax({
+                        url: "{{ path('ajax_customer') }}",
+                        dataType: "json",
+                        data: {
+                            field: "lastname",
+                            search: $('#customer').val()
+                        },
+                        success: function( data ) {
+                            response( $.map( data.customers, function( item ) {
+                                console.log(data.customers);
+                                return {
+                                    value: item.lastname + " " + item.firstname,
+                                    id: item.id
+                                }
+                            }));
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function(event, ui) { $('#customerId').val(ui.item.id); console.log(ui.item.id); }
+            });
+        });
+
+    </script>
+{% endblock %}

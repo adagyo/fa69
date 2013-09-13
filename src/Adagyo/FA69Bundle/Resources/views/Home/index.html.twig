@@ -1,0 +1,33 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <!-- Shortcuts -->
+    <div class="container">
+        <ul class="thumbnails shortcuts">
+            <li class="span3 green">
+                <a class="thumbnail green" href="{{ path('bill_create') }}">
+                    <img src="{{ asset('img/fact_new.png') }}" alt="Nouvelle facture">
+                    <p class="text-success text-center">Nouvelle facture</p>
+                </a>
+            </li>
+            <li class="span3">
+                <a class="thumbnail grey" href="{{ path('bill_search') }}">
+                    <img src="{{ asset('img/fact_open.png') }}" alt="Ouvrir une facture">
+                    <p class="muted text-center">Ouvrir une facture</p>
+                </a>
+            </li>
+            <li class="span3">
+                <a class="thumbnail blue" href="cust_open.html">
+                    <img src="{{ asset('img/cust_open.png') }}" alt="Ouvrir une fiche client">
+                    <p class="text-info text-center">Ouvrir une fiche client</p>
+                </a>
+            </li>
+            <li class="span3">
+                <a class="thumbnail purple" href="stats.html">
+                    <img src="{{ asset('img/stats.png') }}" alt="Rapport d'activité">
+                    <p class="text-purple text-center">Rapport d'activité</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+{% endblock %}
