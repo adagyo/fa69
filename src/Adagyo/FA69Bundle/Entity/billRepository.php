@@ -16,7 +16,8 @@ class billRepository extends EntityRepository {
                       ->join('b.customer', 'cust')
                       ->where('cust.id = :customerId')
                         ->setParameter('customerId', $custumerId)
-                      ->orderBy('b.date', 'ASC');
+                      ->orderBy('b.date', 'ASC')
+                      ->addOrderBy('b.id', 'ASC');
         if($dateFrom) {
             $bills->andWhere('b.date >= :dateFrom')->setParameter('dateFrom', $dateFrom);
         }
@@ -27,9 +28,12 @@ class billRepository extends EntityRepository {
         return $bills->getQuery()->getResult();
     }
 
-    public function getBillsByDates($dateFrom = null, $dateTo = null) {
+    public function getBillsByDates($dateFrom = null, $dateTo = null,$limit = 10, $offset = 0) {
         $bills = $this->createQueryBuilder('b')
-            ->orderBy('b.date', 'ASC');
+            ->orderBy('b.date', 'ASC')
+            ->addOrderBy('b.id', 'ASC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
         if($dateFrom) {
             $bills->andWhere('b.date >= :dateFrom')->setParameter('dateFrom', $dateFrom);
         }

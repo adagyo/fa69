@@ -1,6 +1,18 @@
 
 function initModal() { $('#modal-content-init').show(); $('#modal-content-ok').hide(); $('#modal-content-ko').hide(); $('#btn-close').addClass('disabled'); }
-function successModal() { $('#modal-content-init').hide(); $('#modal-content-ok').show(); $('#modal-content-ko').hide();  $('#btn-close').removeClass('disabled'); $('#modalMsg').effect('highlight', {}, 500, function() { setTimeout(function() { $('#modalMsg').modal('hide'); }, 3000); }); }
+function successModal(highlight,keepOpenTime) {
+    keepOpenTime = typeof keepOpenTime !== 'undefined' ? keepOpenTime : 3000;
+    highlight = typeof highlight !== 'undefined' ? highlight : true;
+    $('#modal-content-init').hide();
+    $('#modal-content-ok').show();
+    $('#modal-content-ko').hide();
+    $('#btn-close').removeClass('disabled');
+    if(highlight === true) {
+        $('#modalMsg').effect('highlight', {}, 500, function() { setTimeout(function() { $('#modalMsg').modal('hide'); }, keepOpenTime); });
+    } else {
+        setTimeout(function() { $('#modalMsg').modal('hide'); }, keepOpenTime);
+    }
+}
 function errorModal(message) {
     $('#modal-content-ko > .alert').html(message);
     $('#modal-content-init').hide();
@@ -89,3 +101,4 @@ function getBillLines() {
     }
     return billLines;
 }
+

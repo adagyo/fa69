@@ -307,19 +307,19 @@ class AjaxController extends Controller {
         $customerId = $request->get('customerId');
         $dateFrom = $request->get('dateFrom');
         $dateTo = $request->get('dateTo');
+        $limit =  $request->get('limit');
+        $offset =  $request->get('offset');
 
-        $results = array();
+        $results = null;
         $repository = $em->getRepository('AdagyoFA69Bundle:bill');
 
         if($billId) {
-            array_push($results,$repository->find($billId));
+            $results = array($repository->find($billId));
         } elseif($customerId) {
-            // TODO with date or not
-            array_push($results,$repository->getBillsByCustomerId($customerId,$dateFrom,$dateTo));
+            $results = $repository->getBillsByCustomerId($customerId,$dateFrom,$dateTo,$limit,$offset);
 
         } elseif($dateFrom || $dateTo) {
-            // TODO
-            array_push($results,$repository->getBillsByDates($dateFrom,$dateTo));
+            $results = $repository->getBillsByDates($dateFrom,$dateTo,$limit,$offset);
         } else {
             return new Response('Veuillez replir au moins un champ du formulaire de recherche SVP!',400);
         }
