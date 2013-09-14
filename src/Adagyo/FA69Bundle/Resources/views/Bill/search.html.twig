@@ -140,7 +140,7 @@
             $(document).on('click','a.pageBtn',function(e){
                 e.preventDefault();
                 toPage = parseInt($(this).attr('data-page'));
-                offset = toPage*10;
+                offset = (toPage-1)*10;
                 if((toPage > 0) && (toPage < 6)){
                     showResponse(offset);
                     $('.prevPage').attr('data-page',toPage-1);
@@ -177,7 +177,7 @@
 
             function getPagination(offset, limit) {
                 nbResults = results.length;
-                currentPage = offset/limit;
+                currentPage = offset/limit + 1;
                 nbPages = Math.ceil(nbResults/limit);
 
                 console.log("page courrante: " + currentPage);
