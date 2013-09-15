@@ -78,6 +78,12 @@ ajax_bill_save:
     requirements:
             _method: POST
 
+ajax_bill_pdf:
+    pattern: /ajax/bill/pdf
+    defaults: { _controller: AdagyoFA69Bundle:Ajax:getBill }
+    requirements:
+            _method: POST
+
 fos_user_security:
     resource: "@FOSUserBundle/Resources/config/routing/security.xml"
 

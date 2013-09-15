@@ -326,4 +326,58 @@ class AjaxController extends Controller {
 
         return new Response($serializer->serialize(array("results" => $results), 'json'), 200, array('Content-type' => 'application/json'));
     }
+
+    public function getBillAction() {
+        $request = $this->getRequest();
+        $em = $this->getDoctrine()->getManager();
+        $serializer = $this->get('jms_serializer');
+
+        $repository = $em->getRepository('AdagyoFA69Bundle:bill');
+        $bill = $repository->find($request->get('id'));
+
+        /* Impression en pdf */
+        $kernel = $this->get('kernel');
+
+        $rootDir = $kernel->getRootDir() . '/..';
+        $file = 'Facture_' . $bill->getId() . '.pdf';
+        $tmp = $rootDir . '/web/bills/' . $file;
+
+        $billLines = $bill->getLines();
+        $linesArr = array();
+        for($i = 0; $i < 17; $i++) {
+            $l = new line();
+            $l->setQuantity(0);
+            $l->setNumber($i+1);
+            $linesArr[$i] = $l;
+        }
+        for($i = 0; $i < count($billLines); $i++) {
+            $l = $billLines[$i];
+            $idx = $l->getNumber();
+            $linesArr[$idx] = $l;
+        }
+
+        $html2pdf = new Html2Pdf('P','A4','fr',true,'UTF-8',array(7,67,7,35));
+        $html = $this->renderView('AdagyoFA69Bundle:Bill:bill.html.twig', array(
+            'billId'    => $bill->getId(),
+            'customer'  => $bill->getCustomer(),
+            'car'       => $bill->getCar(),
+            'date'      => $bill->getDate()->format('d/m/Y'),
+            'lines'     => $linesArr,
+            'totalExVATNewPart' => $bill->getTotalVATNewPart(),
+            'totalVATNewPart'   => $bill->getTotalVATNewPart(),
+            'totalExVATOldPart' => $bill->getTotalExVATOldPart(),
+            'totalDiscount'     => $bill->getTotalDiscount(),
+            'VAT'               => $bill->getVAT(),
+            'totalAmount'       => $bill->getTotalAmount(),
+            'paymentMethod'     => $bill->getPaymentMethod(),
+            'settlementDate'    => $bill->getSettlementDate(),
+            'preview'           => false,
+        ));
+
+        $html2pdf->writeHTML($html);
+        $html2pdf->Output($tmp, 'F');
+
+        $response['billPdf'] = $request->getBasePath().'/bills/'.$file;
+        return new Response($serializer->serialize($response, 'json'), 201, array('Content-type' => 'application/json'));
+    }
 }

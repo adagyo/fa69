@@ -44,12 +44,12 @@
             <table class="table table-striped table-bordered table-condensed table-hover">
                 <thead>
                     <tr>
-                        <th class="span1">N°</th>
-                        <th class="span1">Date</th>
-                        <th class="span3">Client</th>
-                        <th class="span3">Véhicule</th>
-                        <th class="span2">Immatriculation</th>
-                        <th class="span2">Montant total</th>
+                        <th class="span1"><a class="head" href="#" data-sort="id" data-sortorder="ASC">N°</a></th>
+                        <th class="span1"><a class="head" href="#" data-sort="date" data-sortorder="DESC">Date</a></th>
+                        <th class="span3"><a class="head" href="#" data-sort="customer" data-sortorder="ASC">Client</a></th>
+                        <th class="span3"><a class="head" href="#" data-sort="car" data-sortorder="ASC">Véhicule</a></th>
+                        <th class="span2"><a class="head" href="#" data-sort="reg_plate" data-sortorder="ASC">Immatriculation</a></th>
+                        <th class="span2"><a class="head" href="#" data-sort="total_amount" data-sortorder="ASC">Montant total</a></th>
                     </tr>
                 </thead>
                 <tbody id="searchResults">
@@ -73,6 +73,10 @@
             <a class="btn" id="btn-close" data-dismiss="modal" aria-hidden="true">Fermer</a>
         </div>
     </div>
+
+    <div id="bill" class="hide">
+        <iframe id="ifBill" style="width: 98%; height: 95%" src=""></iframe>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
@@ -83,11 +87,17 @@
             initModal();
             $('#modalMsg').modal({ keyboard: false, backdrop: 'static', show: false });
             $('#modalMsg').on('hidden', function() { initModal(); });
+            $('#bill').dialog({
+                height: 600,
+                width: 900,
+                modal: true,
+                autoOpen: false
+            });
 
             $('#billId').numeric({ negative: false });
             $('#dateFrom').datepicker({ changeMonth: true, changeYear: true, regional: "fr", showButtonPanel: true });
             $('#dateTo').datepicker({ changeMonth: true, changeYear: true, regional: "fr", showButtonPanel: true });
-            $('#reset').on('click', function(e) { document.forms[0].reset(); cleanResults(true); results = null; });
+            $('#reset').on('click', function(e) { document.forms[0].reset(); cleanResults(true); $('#customerId').val(''); results = null; });
             $('#showHide').on('click', function(e) { $('#frm').slideToggle(); $(this).toggleClass('icon-chevron-down icon-chevron-right'); });
             $('#search').on('click', function(e) {
                 $('#modalMsg').modal('show');
@@ -104,7 +114,16 @@
                         offset: 0
                     },
                     success: function(data) {
-                        results = data.results;
+                        results = new Array();
+                        for(i = 0; i < data.results.length; i++) {
+                            results[i] = { id: data.results[i].id,
+                                           date: data.results[i].date.substring(0,10),
+                                           customer: (data.results[i].customer.firstname+' '+data.results[i].customer.lastname).trim(),
+                                           car: data.results[i].car.brand,
+                                           reg_plate: data.results[i].car.reg_plate,
+                                           total_amount: data.results[i].total_amount
+                            };
+                        }
                         showResponse();
                         successModal(false,0);
                     },
@@ -113,6 +132,12 @@
                     }
                 });
             });
+            $('.head').on('click', function(e) {
+                e.preventDefault();
+                results = sortHashTable(results, $(this).attr('data-sort'),$(this).attr('data-sortorder'));
+                $(this).attr('data-sortorder', $(this).attr('data-sortorder') == 'ASC' ? 'DESC' : 'ASC');
+                showResponse();
+            })
 
             $('#customer').autocomplete({
                 source: function( request, response ) {
@@ -149,7 +174,19 @@
             });
             $(document).on('click','tr.result',function(e){
                 e.preventDefault();
-                console.log($(this).attr('data-billid'));
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ path('ajax_bill_pdf') }}',
+                    dataType: "json",
+                    cache: false,
+                    data: {
+                        id: $(this).attr('data-billid')
+                    },
+                    success: function(data) {
+                        $('#ifBill').attr('src',data.billPdf);
+                        $('#bill').dialog({ title: 'Facture n°' + $(this).attr('data-billid') }).dialog("open");
+                    }
+                });
             });
 
 
@@ -165,9 +202,9 @@
                     for(i = offset; i < loopUntil; i++) {
                         line  = '<tr class="result" data-billid="'+results[i].id+'"><td>'+results[i].id+'</td>';
                         line += '<td>'+parseDate(results[i].date)+'</td>';
-                        line += '<td>'+results[i].customer.firstname+' '+results[i].customer.lastname+'</td>';
-                        line += '<td>'+results[i].car.brand+'</td>';
-                        line += '<td>'+results[i].car.reg_plate+'</td>';
+                        line += '<td>'+results[i].customer+'</td>';
+                        line += '<td>'+results[i].car+'</td>';
+                        line += '<td>'+results[i].reg_plate+'</td>';
                         line += '<td>'+results[i].total_amount.toFixed(2)+'€</td>';
                         $('#searchResults').append(line);
                     }
@@ -201,7 +238,6 @@
 
             function parseDate(date,toDb) {
                 toDb = typeof toDb !== 'undefined' ? toDb : false;
-                date = date.substring(0,10);
                 if(date != "") {
                     if(toDb === false) {
                         return date.substring(8,10) + "/" + date.substring(5,7) + "/" + date.substring(0,4);

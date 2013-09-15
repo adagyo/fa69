@@ -102,3 +102,26 @@ function getBillLines() {
     return billLines;
 }
 
+function compare(a,b) {
+    if (a.last_nom < b.last_nom)
+        return -1;
+    if (a.last_nom > b.last_nom)
+        return 1;
+    return 0;
+}
+
+function sortHashTable(hashTable, sortBy, sortOrder) {
+    //console.log("Trier par " + sortBy + ' ' + sortOrder);
+    if(sortOrder == 'ASC') {
+        var newHashTable = hashTable.sort(function (a, b) {
+            if(typeof(a[sortBy]) === 'number') { return a[sortBy] - b[sortBy]; }
+            else { if (a[sortBy] < b[sortBy]) { return -1; } if (a[sortBy] > b[sortBy]) { return 1; } return 0; }
+        });
+    } else {
+        var newHashTable = hashTable.reverse(function (a, b) {
+            if(typeof(a[sortBy]) === 'number') { return a[sortBy] - b[sortBy]; }
+            else { if (a[sortBy] < b[sortBy]) { return -1; } if (a[sortBy] > b[sortBy]) { return 1; } return 0; }
+        });
+    }
+    return newHashTable;
+}
