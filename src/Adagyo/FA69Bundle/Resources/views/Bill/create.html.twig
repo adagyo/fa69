@@ -323,7 +323,7 @@
             $('.quality').autocomplete({ source: quals, minLength: 0, autoFocus: true });
             $('.quality').on('focus', function(e) {$(this).autocomplete("search",""); });
 
-            $('#print').on('click', function(e) { window.frames['iPrintable'].focus(); window.frames['iPrintable'].print();});
+            //$('#print').on('click', function(e) { window.frames['iPrintable'].focus(); window.frames['iPrintable'].print();});
             $('#done').on('click', function(e) { window.location.href = '{{ path('homepage') }}'; });
 
             {% for i in 0..16 %}

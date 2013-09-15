@@ -41,7 +41,7 @@
             </form>
         </div>
         <div class="row">
-            <table class="table table-striped table-bordered table-condensed">
+            <table class="table table-striped table-bordered table-condensed table-hover">
                 <thead>
                     <tr>
                         <th class="span1">N°</th>
@@ -147,20 +147,23 @@
                     $('.nextPage').attr('data-page',toPage+1);
                 }
             });
+            $(document).on('click','tr.result',function(e){
+                e.preventDefault();
+                console.log($(this).attr('data-billid'));
+            });
+
 
             function showResponse(offset, limit) {
                 offset = typeof offset !== 'undefined' ? offset : 0;
                 limit = typeof limit !== 'undefined' ? limit : 10;
                 nbResults = results.length;
 
-                console.log('display from ' + offset);
-
                 if(nbResults > 0) {
                     cleanResults(false);
                     loopUntil = offset + limit;
                     if(loopUntil > nbResults) { loopUntil = nbResults; }
                     for(i = offset; i < loopUntil; i++) {
-                        line  = '<tr><td>'+results[i].id+'</td>';
+                        line  = '<tr class="result" data-billid="'+results[i].id+'"><td>'+results[i].id+'</td>';
                         line += '<td>'+parseDate(results[i].date)+'</td>';
                         line += '<td>'+results[i].customer.firstname+' '+results[i].customer.lastname+'</td>';
                         line += '<td>'+results[i].car.brand+'</td>';
@@ -179,8 +182,6 @@
                 nbResults = results.length;
                 currentPage = offset/limit + 1;
                 nbPages = Math.ceil(nbResults/limit);
-
-                console.log("page courrante: " + currentPage);
 
                 pager  = '<tr><td colspan="6"><div class="pagination pagination-centered"><ul><li class="';
                 if(currentPage == 1) { pager += 'disabled'; }
