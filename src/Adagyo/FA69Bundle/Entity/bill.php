@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Adagyo\FA69Bundle\Entity\billRepository")
+ * @ORM\HasLifecycleCallbacks
  */
 class bill
 {
@@ -63,6 +64,13 @@ class bill
      * @var float
      */
     private $VAT;
+
+    /**
+     * @var float
+     * @ORM\ManyToOne(targetEntity="Adagyo\FA69Bundle\Entity\vat")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $vatRate;
 
     /**
      * @var float
@@ -330,5 +338,48 @@ class bill
      */
     public function getCarMileage() {
         return $this->carMileage;
+    }
+
+    /**
+     * Set vatRate
+     *
+     * @param \Adagyo\FA69Bundle\Entity\vat $vatRate
+     * @return bill
+     */
+    public function setVatRate(\Adagyo\FA69Bundle\Entity\vat $vatRate) {
+        $this->vatRate = $vatRate;
+        return $this;
+    }
+
+    /**
+     * Get vatRate
+     * @return \Adagyo\FA69Bundle\Entity\vat 
+     */
+    public function getVatRate() {
+        return $this->vatRate;
+    }
+
+    /**
+     * @ORM\PostLoad()
+     */
+    public function compute() {
+        for($i = 0; $i < count($this->lines); $i++) {
+            $currLine = $this->lines->get($i);
+            $currQuality = $currLine->getQuality();
+            $currQuantity = $currLine->getQuantity();
+            $currDiscount = $currLine->getDiscount();
+            $currPrice = $currLine->getUnitPriceVAT();
+
+            $lineTotal = ($currPrice * (1 - $currDiscount / 100)) * $currQuantity;
+            $this->totalDiscount += ($currPrice * $currQuantity) - $lineTotal;
+            if(strtolower($currQuality) == 'neuf') {
+                $this->totalVATNewPart += $lineTotal;
+                $lineExVATTotal = $lineTotal / (1 + ($this->vatRate->getRate() / 100));
+                $this->totalExVATNewPart += $lineExVATTotal;
+                $this->VAT += $lineTotal - $lineExVATTotal;
+            } else {
+                $this->totalExVATOldPart += $lineTotal;
+            }
+        }
     }
 }

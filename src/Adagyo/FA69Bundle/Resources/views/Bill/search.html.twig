@@ -91,7 +91,16 @@
                 height: 600,
                 width: 900,
                 modal: true,
-                autoOpen: false
+                autoOpen: false,
+                buttons: {
+                    "Imprimer": function() {
+                        window.frames['ifBill'].focus();
+                        window.frames['ifBill'].print();
+                    },
+                    "Fermer" : function() {
+                        $( this ).dialog( "close" );
+                    }
+                }
             });
 
             $('#billId').numeric({ negative: false });
@@ -174,17 +183,21 @@
             });
             $(document).on('click','tr.result',function(e){
                 e.preventDefault();
+                billId = $(this).attr('data-billid');
+                $('#modalMsg').modal('show');
                 $.ajax({
                     type: 'POST',
                     url: '{{ path('ajax_bill_pdf') }}',
                     dataType: "json",
                     cache: false,
                     data: {
-                        id: $(this).attr('data-billid')
+                        id: billId
                     },
                     success: function(data) {
+
+                        successModal(false,0);
                         $('#ifBill').attr('src',data.billPdf);
-                        $('#bill').dialog({ title: 'Facture n°' + $(this).attr('data-billid') }).dialog("open");
+                        $('#bill').dialog({ title: 'Facture n°' + billId }).dialog("open");
                     }
                 });
             });

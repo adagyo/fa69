@@ -68,7 +68,7 @@
                         <td style="text-align: right; width: 28mm" class="bBottom">{{ totalExVATNewPart|number_format(2,',','') }} €</td>
                     </tr>
                     <tr>
-                        <td style="width: 154mm" class="bBottom bRight">TVA 19,6 % sur pièces NEUVES, MONTAGE et FRAIS DE PORT</td>
+                        <td style="width: 154mm" class="bBottom bRight">TVA {{ vatRate|number_format(2,',','') }}% sur pièces NEUVES, MONTAGE et FRAIS DE PORT</td>
                         <td style="text-align: right; width: 28mm" class="bBottom">{{ VAT|number_format(2,',','') }} €</td>
                     </tr>
                     <tr>

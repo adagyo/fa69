@@ -25,6 +25,7 @@ class billType extends AbstractType
             ->add('car', new carType())
             ->add('lines', 'collection', array('type' => new lineType(), 'allow_add' => false, 'allow_delete' => false))
             ->add('carMileage', 'hidden')
+            ->add('vatRate', new vatType())
         ;
     }
 

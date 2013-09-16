@@ -21,6 +21,7 @@ class BillController extends Controller {
             $line->setNumber($i);
             $bill->addLine($line);
         }
+        $bill->setVatRate($this->getDoctrine()->getManager()->getRepository('AdagyoFA69Bundle:vat')->getCurrentVAT());
         $form = $this->createForm(new billType(), $bill);
 
         return $this->render('AdagyoFA69Bundle:Bill:create.html.twig', array('form' => $form->createView()));

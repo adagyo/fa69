@@ -118,6 +118,7 @@
             <!-- Start of bill's FRM -->
             <div id="Bill">
                 {{ form_widget(form.carMileage) }}
+                {{ form_widget(form.vatRate.id) }}
                 <div class="input-row offset1">
                     {{ form_widget(form.date, { 'attr' : { 'class' : 'uneditable-input span3 Customer Car Bill', 'placeholder' : 'Date de facturation' } }) }}
                     {{ form_widget(form.settlementDate, { 'attr' : { 'class' : 'span3 Customer Car Bill', 'placeholder' : 'Date de règlement' } }) }}
@@ -164,7 +165,7 @@
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td colspan="3">TVA 19,6 % sur pièces NEUVES, MONTAGE et FRAIS DE PORT:</td>
+                                <td colspan="3" id="updVAT">TVA ---% sur pièces NEUVES, MONTAGE et FRAIS DE PORT:</td>
                                 <td colspan="3"><div class="input-append">{{ form_widget(form.VAT, { 'attr' : { 'class' : 'uneditable-input span3 Customer Car Bill align-right' } }) }}<span class="add-on">€</span></div>                                </td>
                                 <td>&nbsp;</td>
                             </tr>
@@ -198,6 +199,11 @@
                 <iframe id="ifPreview" class="pdf span9" src=""></iframe>
             </div>
             <!-- End of preview's FRM -->
+
+            <!-- Rest of form -->
+            <div class="hide">
+                {{ form_widget(form.vatRate.rate) }}{{ form_widget(form.vatRate.isCurrent) }}
+            </div>
         {{ form_end(form) }}
         </div>
 
@@ -248,6 +254,8 @@
             var quals = ['Neuf', 'Occasion'];
             var selected_cars = [];
             var currentStep = goToStep('_', 'Customer');
+            var vatRate = $('#{{ form.vatRate.rate.vars.id }}').val().replace(',','.');
+            $('#updVAT').html($('#updVAT').html().replace('---',vatRate));
 
             initModal();
             $('#Car').hide();
@@ -360,7 +368,7 @@
                         totalDiscount += (unitprice * quantity) - lineTotal;
                         if(quality == 'Neuf') {
                             totalVATNewPart += lineTotal;
-                            lineExVATTotal = lineTotal / 1.196; // TODO Parametriser la VAT
+                            lineExVATTotal = lineTotal / (1 + (vatRate / 100));
                             totalExVATNewPart += lineExVATTotal;
                             VAT += lineTotal - lineExVATTotal;
                         } else {
@@ -484,7 +492,8 @@
                                 totalExVATOldPart   : $('#{{ form.totalExVATOldPart.vars.id }}').val(),
                                 totalDiscount       : $('#{{ form.totalDiscount.vars.id }}').val(),
                                 VAT                 : $('#{{ form.VAT.vars.id }}').val(),
-                                totalAmount         : $('#{{ form.totalAmount.vars.id }}').val()
+                                totalAmount         : $('#{{ form.totalAmount.vars.id }}').val(),
+                                vatRate             : vatRate
                             },
                             success: function(data) {
                                 $('#ifPreview').attr('src',data);
@@ -515,7 +524,8 @@
                                 totalExVATOldPart   : $('#{{ form.totalExVATOldPart.vars.id }}').val(),
                                 totalDiscount       : $('#{{ form.totalDiscount.vars.id }}').val(),
                                 VAT                 : $('#{{ form.VAT.vars.id }}').val(),
-                                totalAmount         : $('#{{ form.totalAmount.vars.id }}').val()
+                                totalAmount         : $('#{{ form.totalAmount.vars.id }}').val(),
+                                vatRateId           : $('#{{ form.vatRate.id.vars.id }}').val()
                             },
                             success: function(data) {
                                 $('#modalMsg').modal('hide');

@@ -4,11 +4,11 @@ namespace Adagyo\FA69Bundle\Controller;
 
 use Adagyo\FA69Bundle\Entity\bill;
 use Adagyo\FA69Bundle\Entity\line;
+use Adagyo\FA69Bundle\Entity\vat;
 use Spipu\Html2Pdf\Html2Pdf;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 use Adagyo\FA69Bundle\Entity\customer;
 use Adagyo\FA69Bundle\Entity\car;
@@ -199,6 +199,7 @@ class AjaxController extends Controller {
             'totalExVATOldPart' => $request->get('totalExVATOldPart'),
             'totalDiscount'     => $request->get('totalDiscount'),
             'VAT'               => $request->get('VAT'),
+            'vatRate'           => $request->get('vatRate'),
             'totalAmount'       => $request->get('totalAmount'),
             'paymentMethod'     => $request->get('paymentMethod'),
             'settlementDate'    => $request->get('settlementDate'),
@@ -221,6 +222,7 @@ class AjaxController extends Controller {
         /* Sauvegarde de la facture */
         $tmp = explode('/',$request->get('date')); $date = $tmp[2].'-'.$tmp[1].'-'.$tmp[0];
 
+
         if($request->get('billId') == '') {
             $bill = new bill();
         } else {
@@ -236,6 +238,10 @@ class AjaxController extends Controller {
         $bill->setTotalDiscount($request->get('totalDiscount'));
         $bill->setVAT($request->get('VAT'));
         $bill->setTotalAmount($request->get('totalAmount'));
+
+        $repository = $em->getRepository('AdagyoFA69Bundle:vat');
+        $vatRate = $repository->find($request->get('vatRateId'));
+        $bill->setVatRate($vatRate);
 
         $repository = $em->getRepository('AdagyoFA69Bundle:customer');
         $customer = $repository->find($request->get('customerId'));
@@ -285,6 +291,7 @@ class AjaxController extends Controller {
             'totalExVATOldPart' => $request->get('totalExVATOldPart'),
             'totalDiscount'     => $request->get('totalDiscount'),
             'VAT'               => $request->get('VAT'),
+            'vatRate'           => $bill->getVatRate()->getRate(),
             'totalAmount'       => $request->get('totalAmount'),
             'paymentMethod'     => $request->get('paymentMethod'),
             'settlementDate'    => $request->get('settlementDate'),
@@ -368,6 +375,7 @@ class AjaxController extends Controller {
             'totalExVATOldPart' => $bill->getTotalExVATOldPart(),
             'totalDiscount'     => $bill->getTotalDiscount(),
             'VAT'               => $bill->getVAT(),
+            'vatRate'           => $bill->getVatRate()->getRate(),
             'totalAmount'       => $bill->getTotalAmount(),
             'paymentMethod'     => $bill->getPaymentMethod(),
             'settlementDate'    => $bill->getSettlementDate(),
