@@ -46,6 +46,8 @@
                                     <li><a href="{{ path('fos_user_change_password') }}"><i class="icon-user"></i> Profil</a></li>
                                     <li class="divider"></li>
                                     {% if is_granted('ROLE_SUPER_ADMIN') %}
+                                    <li><a href="{{ path('admin_vat') }}"><i class="icon-briefcase"></i> Paramètres</a></li>
+                                    <li class="divider"></li>
                                     <li><a href="#"><i class="icon-wrench"></i> Accès Base de données</a></li>
                                     <li class="divider"></li>
                                     {% endif %}

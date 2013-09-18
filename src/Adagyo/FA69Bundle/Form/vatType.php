@@ -16,7 +16,7 @@ class vatType extends AbstractType
         $builder
             ->add('id','hidden')
             ->add('rate')
-            ->add('isCurrent');
+            ->add('isCurrent','hidden');
     }
     
     /**

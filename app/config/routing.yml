@@ -1,3 +1,7 @@
+admin_vat:
+    pattern: /admin/params
+    defaults: { _controller: AdagyoAdminBundle:Admin:vat }
+
 homepage:
     pattern:  /
     defaults: { _controller: AdagyoFA69Bundle:Home:index }
@@ -81,6 +85,12 @@ ajax_bill_save:
 ajax_bill_pdf:
     pattern: /ajax/bill/pdf
     defaults: { _controller: AdagyoFA69Bundle:Ajax:getBill }
+    requirements:
+            _method: POST
+
+ajax_vat_save:
+    pattern: /ajax/vat/save
+    defaults: { _controller: AdagyoFA69Bundle:Ajax:saveVat }
     requirements:
             _method: POST
 

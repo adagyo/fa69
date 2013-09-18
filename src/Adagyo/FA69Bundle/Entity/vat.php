@@ -3,6 +3,7 @@
 namespace Adagyo\FA69Bundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * vat
@@ -23,8 +24,9 @@ class vat
 
     /**
      * @var float
-     *
      * @ORM\Column(name="rate", type="float")
+     * @Assert\NotBlank(message="Le taux de TVA est obligatoire")
+     * @Assert\Type(type="numeric", message="Le taux de TVA doit être numérique")
      */
     private $rate;
 

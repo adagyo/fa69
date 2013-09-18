@@ -21,6 +21,7 @@ class AppKernel extends Kernel
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new Adagyo\FA69Bundle\AdagyoFA69Bundle(),
             new Adagyo\UserBundle\AdagyoUserBundle(),
+            new Adagyo\AdminBundle\AdagyoAdminBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

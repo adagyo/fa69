@@ -1,0 +1,7 @@
+parameters:
+#    adagyo_admin.example.class: Adagyo\AdminBundle\Example
+
+services:
+#    adagyo_admin.example:
+#        class: %adagyo_admin.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

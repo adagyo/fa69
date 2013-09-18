@@ -388,4 +388,42 @@ class AjaxController extends Controller {
         $response['billPdf'] = $request->getBasePath().'/bills/'.$file;
         return new Response($serializer->serialize($response, 'json'), 201, array('Content-type' => 'application/json'));
     }
+
+    public function saveVatAction() {
+        $request = $this->getRequest();
+        $vatRate = $request->get('vatRate');
+        $serializer = $this->get('jms_serializer');
+
+        $newVat = new vat();
+        $newVat->setRate($vatRate);
+        $newVat->setIsCurrent(true);
+        $validator = $this->get('validator');
+        $errors = $validator->validate($newVat);
+
+        if(count($errors) > 0) {
+            $arrErrors = array();
+            foreach($errors as $error) { array_push($arrErrors,$error); }
+            return new Response($serializer->serialize(array('errors' => $arrErrors), 'json'), 400, array('Content-type' => 'application/json'));
+        } else {
+            $em = $this->getDoctrine()->getManager();
+            $repository = $em->getRepository('AdagyoFA69Bundle:vat');
+            // Désactivation de toute les VAT
+            $vats = $repository->findAll();
+            foreach($vats as $vat) {
+                $vat->setIsCurrent(false);
+                $em->persist($vat);
+            }
+            // Recherche si le taux est déjà en base
+            $vatExists = $repository->findOneByRate($vatRate);
+            if($vatExists) {
+                $vatExists->setIsCurrent(true);
+                $em->persist($vatExists);
+            } else {
+                $em->persist($newVat);
+            }
+            $em->flush();
+        }
+
+        return new Response($serializer->serialize(array("rate" => $vatRate), 'json'), 200, array('Content-type' => 'application/json'));
+    }
 }

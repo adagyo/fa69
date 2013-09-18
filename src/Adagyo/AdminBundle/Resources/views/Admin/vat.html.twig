@@ -1,0 +1,67 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row offset1 span9">
+            <h3><i class='icon-info-sign'></i> Information sur le taux de TVA utilisé pour les factures</h3>
+            <pre>Le taux actuel de TVA est de <strong id='tx'>{{ currentVAT.rate|number_format(2,',','') }}%</strong></pre>
+
+            {{ form_start(form, { 'attr' : { 'class' : 'form-horizontal', 'id' : 'vat-form' } }) }}
+                <div class="control-group">
+                    <label class="control-label" for="cnum">Fixer le taux de TVA à </label>
+                    <div class="controls">
+                        <div class="input-append">{{ form_widget(form.rate, { 'attr' : { 'class' : 'span1' } }) }}<span class="add-on">%</span></div>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-success" id="save"><i class="icon-check icon-white"></i> Valider</button>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    <!-- modals -->
+    <div id="modalMsg" class="modal hide">
+        <div class="modal-header"><h3>Enregistrement en cours...</h3></div>
+        <div class="modal-body">
+            <div id="modal-content-init"><div class="progress progress-info progress-striped active"><div class="bar" style="width: 100%">Veuillez patienter</div></div></div>
+            <div id="modal-content-ok"><div class="alert alert-success">Taux de TVA modifié avec succès</div></div>
+            <div id="modal-content-ko"><div class="alert alert-error">errors</div></div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" id="btn-close" data-dismiss="modal" aria-hidden="true">Fermer</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $(function () {
+        initModal();
+        $('#modalMsg').modal({ keyboard: false, backdrop: 'static', show: false });
+        $('#modalMsg').on('hidden', function() { initModal(); });
+
+        $('#{{ form.rate.vars.id }}').numeric({ negative: false });
+        $('#save').on('click', function(e) {
+            e.preventDefault();
+            $('#modalMsg').modal('show');
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('ajax_vat_save') }}',
+                dataType: 'json',
+                cache: false,
+                data: { vatRate: $('#{{ form.rate.vars.id }}').val() },
+                success: function(data) {
+                    $('#modal-content-ok > .alert').html('A partir de maintenant, le taux de TVA appliqué sera de ' + data.rate + '%');
+                    $('#tx').html(data.rate + '%');
+                    successModal(true,5000);
+                },
+                error: function(jqXHR) {
+                    $('#modal-content-ko > .alert').html('');
+                    var errors = $.parseJSON(jqXHR.responseText);
+                    for( var i = 0; i < errors['errors'].length; i++) { $('#modal-content-ko > .alert').append(errors['errors'][i].message + "<br />"); }
+                    errorModal();
+                }
+            });
+        })
+    });
+</script>
+{% endblock %}
