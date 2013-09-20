@@ -22,6 +22,7 @@ class AppKernel extends Kernel
             new Adagyo\FA69Bundle\AdagyoFA69Bundle(),
             new Adagyo\UserBundle\AdagyoUserBundle(),
             new Adagyo\AdminBundle\AdagyoAdminBundle(),
+            new Adagyo\StatsBundle\AdagyoStatsBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

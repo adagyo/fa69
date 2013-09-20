@@ -1,0 +1,7 @@
+parameters:
+#    adagyo_stats.example.class: Adagyo\StatsBundle\Example
+
+services:
+#    adagyo_stats.example:
+#        class: %adagyo_stats.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

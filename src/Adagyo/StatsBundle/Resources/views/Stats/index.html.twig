@@ -1,0 +1,128 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div id="chartCA"></div>
+            <div id="chartBestBuyersCA"></div>
+            <div id="chartBestBuyersNbInv"></div>
+        </div>
+    </div>
+
+    <!-- modals -->
+    <div id="modalMsg" class="modal hide">
+        <div class="modal-header"><h3>Chargement en cours...</h3></div>
+        <div class="modal-body">
+            <div id="modal-content-init"><div class="progress progress-info progress-striped active"><div class="bar" style="width: 100%">Veuillez patienter</div></div></div>
+            <div id="modal-content-ok"><div class="alert alert-success">Chargement terminé</div></div>
+            <div id="modal-content-ko"><div class="alert alert-error">errors</div></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+<script src="{{ asset('js/highcharts/highstock.js') }}"></script>
+    <script src="{{ asset('js/highcharts/themes/gray.js') }}"></script>
+<script>
+    $(function() {
+        var d = new Date();
+        initModal();
+        $('#modalMsg').modal({ keyboard: false, backdrop: 'static', show: false });
+        $('#modalMsg').on('hidden', function() { initModal(); });
+        $('#modalMsg').modal('show');
+
+        $.ajax({
+            type: 'GET',
+            url: '{{ path('ajax_stats_ca') }}',
+            dataType: 'json',
+            success: function(data) {
+                $('#chartCA').highcharts("StockChart", {
+                    chart: { type: 'column' },
+                    credits: { enabled: false },
+                    exporting: {
+                        filename: "ChiffreAffaire",
+                        type: "image/jpeg"
+                    },
+                    legend: {
+                        align: "center",
+                        enabled: true,
+                        shadow: true,
+                        verticalAlign: "bottom"
+                    },
+                    plotOptions: {
+                        column: {
+                            stacking: "normal",
+                            dataGrouping: {
+                                units: [[ 'day', [1,2,3,4,5,6,7] ],
+                                        [ 'week', [1,2,3,4,5] ],
+                                        [ 'month', [1,3,6] ],
+                                        [ 'year', [1]
+                                ]]
+                            }
+                        },
+                        series: {
+                            turboThreshold: 0
+                        }
+                    },
+                    rangeSelector: {
+                        buttons: [{
+                            type: 'month',
+                            count: 1,
+                            text: '1m'
+                        }, {
+                            type: 'month',
+                            count: 3,
+                            text: '3m'
+                        }, {
+                            type: 'month',
+                            count: 6,
+                            text: '6m'
+                        }, {
+                            type: 'ytd',
+                            text: d.getFullYear()
+                        }],
+                        selected: 0
+                    },
+                    series: [{
+                        name: "Neuf",
+                        data : data.neuf,
+                        stack: "CA"
+                    }, {
+                        name: "Occasion",
+                        data : data.occasion,
+                        stack: "CA"
+                    }, {
+                        name: "Remise",
+                        data : data.remise,
+                        stack: "none"
+                    }],
+                    title: {
+                        text: "Chiffre d'affaire"
+                    },
+                    tooltip: {
+                        valueSuffix: '€'
+                    },
+                    xAxis: {
+                        ordinal: false,
+                        type: 'datetime',
+                        minRange: 3600*24*7*1000,
+                        minTickInterval: 3600*24*7*1000
+                    },
+                    yAxis: {
+                        gridLineDashStyle: 'longdash',
+                        min: 0
+                    }
+                });
+                successModal(false,0);
+            },
+            error: function(jqXHR) {
+                $('#modal-content-ko > .alert').html('');
+                var errors = $.parseJSON(jqXHR.responseText);
+                for( var i = 0; i < errors['errors'].length; i++) { $('#modal-content-ko > .alert').append(errors['errors'][i].message + "<br />"); }
+                errorModal();
+            }
+        });
+
+    });
+</script>
+{% endblock %}

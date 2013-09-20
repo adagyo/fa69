@@ -426,4 +426,51 @@ class AjaxController extends Controller {
 
         return new Response($serializer->serialize(array("rate" => $vatRate), 'json'), 200, array('Content-type' => 'application/json'));
     }
+
+    public function statsCaAction() {
+        $serializer = $this->get('jms_serializer');
+        $db = $this->get('database_connection');
+        $neuf = $occasion = $remise = array();
+
+        /* CA Neuf et Occasion */
+        $query  = "SELECT l.bill_id, b.date AS D, SUM(l.quantity*l.unitPriceVAT*(1-l.discount/100)) AS S ";
+        $query .= "FROM line l, bill b WHERE l.quality = ? AND l.bill_id = b.id ";
+        $query .= "GROUP BY l.bill_id HAVING S >= 0 ORDER BY b.date ASC";
+
+        $results = $db->executeQuery($query, array('Neuf'))->fetchAll();
+        foreach ($results as $r) {
+            array_push($neuf, array(
+                $this->unix_timestamp($r['D']) * 1000,
+                intval($r['S']))
+            );
+        }
+
+        $results = $db->executeQuery($query, array('Occasion'))->fetchAll();
+        foreach ($results as $r) {
+            array_push($occasion, array(
+                $this->unix_timestamp($r['D']) * 1000,
+                intval($r['S']))
+            );
+        }
+        /* Remise */
+        $query  = "SELECT l.bill_id, b.date AS D, SUM(l.quantity*l.unitPriceVAT*(l.discount/100)) AS S ";
+        $query .= "FROM line l, bill b WHERE l.bill_id = b.id GROUP BY l.bill_id ORDER BY b.date ASC";
+        $results = $db->executeQuery($query)->fetchAll();
+        foreach ($results as $r) {
+            array_push($remise, array(
+                $this->unix_timestamp($r['D']) * 1000,
+                intval($r['S']))
+            );
+        }
+
+        $results = array("neuf" => $neuf, "occasion" => $occasion, "remise" => $remise);
+
+        return new Response($serializer->serialize($results, 'json'), 200, array('Content-type' => 'application/json'));
+    }
+
+    private function unix_timestamp($date) {
+        $c    = explode('-', $date);
+        array_walk($c, 'intval');
+        return mktime(0, 0, 0, $c[1], $c[2], $c[0]);
+    }
 }

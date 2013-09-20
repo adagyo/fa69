@@ -18,9 +18,19 @@ bill_search:
     requirements:
         _method: GET
 
+cust_search:
+    pattern: /cutomers
+    defaults: { _controller: AdagyoFA69Bundle:Cust:search }
+    requirements:
+        _method: GET
+
 utils_changepassword_success:
     pattern: /profile/change-password-success
     defaults: { _controller: AdagyoFA69Bundle:Utils:changePasswordSuccess }
+
+stats:
+    pattern: /stats
+    defaults: { _controller: AdagyoStatsBundle:Stats:index }
 
 ajax_customer:
     pattern: /ajax/customer
@@ -93,6 +103,12 @@ ajax_vat_save:
     defaults: { _controller: AdagyoFA69Bundle:Ajax:saveVat }
     requirements:
             _method: POST
+
+ajax_stats_ca:
+    pattern: /ajax/stats/ca
+    defaults: { _controller: AdagyoFA69Bundle:Ajax:statsCa }
+    requirements:
+            _method: GET
 
 fos_user_security:
     resource: "@FOSUserBundle/Resources/config/routing/security.xml"
