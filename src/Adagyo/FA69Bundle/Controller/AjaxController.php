@@ -439,28 +439,37 @@ class AjaxController extends Controller {
 
         $results = $db->executeQuery($query, array('Neuf'))->fetchAll();
         foreach ($results as $r) {
-            array_push($neuf, array(
+            $key = $this->unix_timestamp($r['D'])*1000;
+            if(!$neuf[$key]) { $neuf[$key] = 0; }
+            $neuf[$key] += floatval($r['S']);
+            /*array_push($neuf, array(
                 $this->unix_timestamp($r['D']) * 1000,
                 intval($r['S']))
-            );
+            );*/
         }
 
         $results = $db->executeQuery($query, array('Occasion'))->fetchAll();
         foreach ($results as $r) {
-            array_push($occasion, array(
+            $key = $this->unix_timestamp($r['D'])*1000;
+            if(!$occasion[$key]) { $neuf[$key] = 0; }
+            $occasion[$key] += floatval($r['S']);
+            /*array_push($occasion, array(
                 $this->unix_timestamp($r['D']) * 1000,
                 intval($r['S']))
-            );
+            );*/
         }
         /* Remise */
         $query  = "SELECT l.bill_id, b.date AS D, SUM(l.quantity*l.unitPriceVAT*(l.discount/100)) AS S ";
         $query .= "FROM line l, bill b WHERE l.bill_id = b.id GROUP BY l.bill_id ORDER BY b.date ASC";
         $results = $db->executeQuery($query)->fetchAll();
         foreach ($results as $r) {
-            array_push($remise, array(
+            $key = $this->unix_timestamp($r['D'])*1000;
+            if(!$remise[$key]) { $neuf[$key] = 0; }
+            $remise[$key] += floatval($r['S']);
+            /*array_push($remise, array(
                 $this->unix_timestamp($r['D']) * 1000,
                 intval($r['S']))
-            );
+            );*/
         }
 
         $results = array("neuf" => $neuf, "occasion" => $occasion, "remise" => $remise);
