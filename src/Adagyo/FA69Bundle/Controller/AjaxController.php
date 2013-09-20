@@ -439,8 +439,8 @@ class AjaxController extends Controller {
 
         $results = $db->executeQuery($query, array('Neuf'))->fetchAll();
         foreach ($results as $r) {
-            $key = $this->unix_timestamp($r['D'])*1000;
-            if(!$neuf[$key]) { $neuf[$key] = 0; }
+            $key = $this->unix_timestamp($r['D'])*1000 + "";
+            if(!array_key_exists($key,$neuf)) { $neuf[$key] = 0; }
             $neuf[$key] += floatval($r['S']);
             /*array_push($neuf, array(
                 $this->unix_timestamp($r['D']) * 1000,
@@ -450,8 +450,8 @@ class AjaxController extends Controller {
 
         $results = $db->executeQuery($query, array('Occasion'))->fetchAll();
         foreach ($results as $r) {
-            $key = $this->unix_timestamp($r['D'])*1000;
-            if(!$occasion[$key]) { $neuf[$key] = 0; }
+            $key = $this->unix_timestamp($r['D'])*1000 + "";
+            if(!array_key_exists($key,$occasion)) { $neuf[$occasion] = 0; }
             $occasion[$key] += floatval($r['S']);
             /*array_push($occasion, array(
                 $this->unix_timestamp($r['D']) * 1000,
@@ -463,8 +463,8 @@ class AjaxController extends Controller {
         $query .= "FROM line l, bill b WHERE l.bill_id = b.id GROUP BY l.bill_id ORDER BY b.date ASC";
         $results = $db->executeQuery($query)->fetchAll();
         foreach ($results as $r) {
-            $key = $this->unix_timestamp($r['D'])*1000;
-            if(!$remise[$key]) { $neuf[$key] = 0; }
+            $key = $this->unix_timestamp($r['D'])*1000 + "";
+            if(!array_key_exists($key,$remise)) { $remise[$key] = 0; }
             $remise[$key] += floatval($r['S']);
             /*array_push($remise, array(
                 $this->unix_timestamp($r['D']) * 1000,
