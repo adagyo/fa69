@@ -430,47 +430,40 @@ class AjaxController extends Controller {
     public function statsCaAction() {
         $serializer = $this->get('jms_serializer');
         $db = $this->get('database_connection');
+        $tmpneuf = $tmpoccasion = $tmpremise = array();
         $neuf = $occasion = $remise = array();
 
         /* CA Neuf et Occasion */
-        $query  = "SELECT l.bill_id, b.date AS D, SUM(l.quantity*l.unitPriceVAT*(1-l.discount/100)) AS S ";
+        $query  = "SELECT l.bill_id, unix_timestamp(b.date)*1000 AS D, SUM(l.quantity*l.unitPriceVAT*(1-l.discount/100)) AS S ";
         $query .= "FROM line l, bill b WHERE l.quality = ? AND l.bill_id = b.id ";
         $query .= "GROUP BY l.bill_id HAVING S >= 0 ORDER BY b.date ASC";
 
         $results = $db->executeQuery($query, array('Neuf'))->fetchAll();
         foreach ($results as $r) {
-            $key = $this->unix_timestamp($r['D'])*1000 + "";
-            if(!array_key_exists($key,$neuf)) { $neuf[$key] = 0; }
-            $neuf[$key] += floatval($r['S']);
-            /*array_push($neuf, array(
-                $this->unix_timestamp($r['D']) * 1000,
-                intval($r['S']))
-            );*/
+            $key = strval($this->unix_timestamp($r['D']));
+            if(!array_key_exists($key,$tmpneuf)) { $tmpneuf[$key] = 0; }
+            $tmpneuf[$key] += floatval($r['S']);
         }
+        foreach ($tmpneuf as $k => $v){ array_push($neuf, array($k, $v)); }
 
         $results = $db->executeQuery($query, array('Occasion'))->fetchAll();
         foreach ($results as $r) {
-            $key = $this->unix_timestamp($r['D'])*1000 + "";
-            if(!array_key_exists($key,$occasion)) { $neuf[$occasion] = 0; }
-            $occasion[$key] += floatval($r['S']);
-            /*array_push($occasion, array(
-                $this->unix_timestamp($r['D']) * 1000,
-                intval($r['S']))
-            );*/
+            $key = strval($this->unix_timestamp($r['D']));
+            if(!array_key_exists($key,$tmpoccasion)) { $tmpoccasion[$key] = 0; }
+            $tmpoccasion[$key] += floatval($r['S']);
         }
+        foreach ($tmpoccasion as $k => $v){ array_push($occasion, array($k, $v)); }
+
         /* Remise */
-        $query  = "SELECT l.bill_id, b.date AS D, SUM(l.quantity*l.unitPriceVAT*(l.discount/100)) AS S ";
+        $query  = "SELECT l.bill_id, unix_timestamp(b.date)*1000 AS D, SUM(l.quantity*l.unitPriceVAT*(l.discount/100)) AS S ";
         $query .= "FROM line l, bill b WHERE l.bill_id = b.id GROUP BY l.bill_id ORDER BY b.date ASC";
         $results = $db->executeQuery($query)->fetchAll();
         foreach ($results as $r) {
-            $key = $this->unix_timestamp($r['D'])*1000 + "";
-            if(!array_key_exists($key,$remise)) { $remise[$key] = 0; }
-            $remise[$key] += floatval($r['S']);
-            /*array_push($remise, array(
-                $this->unix_timestamp($r['D']) * 1000,
-                intval($r['S']))
-            );*/
+            $key = strval($this->unix_timestamp($r['D']));
+            if(!array_key_exists($key,$tmpremise)) { $tmpremise[$key] = 0; }
+            $tmpremise[$key] += floatval($r['S']);
         }
+        foreach ($tmpremise as $k => $v){ array_push($remise, array($k, $v)); }
 
         $results = array("neuf" => $neuf, "occasion" => $occasion, "remise" => $remise);
 
@@ -478,8 +471,9 @@ class AjaxController extends Controller {
     }
 
     private function unix_timestamp($date) {
-        $c    = explode('-', $date);
-        array_walk($c, 'intval');
-        return mktime(0, 0, 0, $c[1], $c[2], $c[0]);
+        /*$tmp = explode('-', $date);
+        array_walk($tmp, 'intval');
+        return mktime(0, 0, 0, $tmp[1], $tmp[2], $tmp[0]);*/
+        return $date;
     }
 }
