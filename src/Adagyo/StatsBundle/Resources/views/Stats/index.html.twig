@@ -31,6 +31,14 @@
         $('#modalMsg').on('hidden', function() { initModal(); });
         $('#modalMsg').modal('show');
 
+        Highcharts.setOptions({
+            lang: {
+                months: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+                weekdays: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+                shortMonths: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Dec'],
+            }
+        });
+
         $.ajax({
             type: 'GET',
             url: '{{ path('ajax_stats_ca') }}',
@@ -46,13 +54,21 @@
                         column: {
                             stacking: "normal",
                             dataGrouping: {
-                                units: [[ 'week', [1] ],
+                                groupPixelWidth: 50,
+                                units: [[ 'day', [7,30,31] ],
+                                        [ 'week', [4,5] ],
                                         [ 'month', [1,3,6] ],
                                         [ 'year', [1]
-                                ]]
+                                ]],
+                                dateTimeLabelFormats: {
+                                    day: ['%A %d %b %Y', '%A %d %b', '-%A %d %b %Y'],
+                                    week: ['Semaine du %A %d %b %Y', '%A %d %b', '-%A %d %b %Y']
+                                }
                             }
                         },
-                        series: { turboThreshold: 0 }
+                        series: {
+                            turboThreshold: 0
+                        }
                     },
                     rangeSelector: {
                         buttons: [{
@@ -68,6 +84,10 @@
                             count: 6,
                             text: '6m'
                         }, {
+                            type: 'year',
+                            count: 1,
+                            text: '1a'
+                        }, {
                             type: 'ytd',
                             text: d.getFullYear()
                         }],
@@ -76,26 +96,37 @@
                     series: [{
                         name: "Neuf",
                         data : data.neuf,
-                        stack: "CA"
+                        stack: "CA",
+                        color: "#90B1D8"
                     }, {
                         name: "Occasion",
                         data : data.occasion,
-                        stack: "CA"
+                        stack: "CA",
+                        color: "#6ED854"
                     }, {
                         name: "Remise",
                         data : data.remise,
-                        stack: "none"
+                        stack: "None",
+                        color: "#ff6666"
                     }],
                     title: { text: "Chiffre d'affaire" },
-                    tooltip: { valueSuffix: '€',  },
+                    tooltip: { valueSuffix: '€', valueDecimals: 2 },
                     xAxis: {
                         ordinal: false,
                         type: 'datetime',
+                        minRange: 3600*24*7*1000,
                         minTickInterval: 3600*24*7*1000
                     },
                     yAxis: {
                         gridLineDashStyle: 'longdash',
-                        min: 0
+                        min: 0,
+                        stackLabels: {
+                            enabled: true,
+                            style: {
+                                fontWeight: 'bold',
+                                color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                            }
+                        }
                     }
                 });
                 successModal(false,0);

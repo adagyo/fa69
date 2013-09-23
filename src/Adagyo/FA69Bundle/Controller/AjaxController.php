@@ -434,46 +434,39 @@ class AjaxController extends Controller {
         $neuf = $occasion = $remise = array();
 
         /* CA Neuf et Occasion */
-        $query  = "SELECT l.bill_id, unix_timestamp(b.date)*1000 AS D, SUM(l.quantity*l.unitPriceVAT*(1-l.discount/100)) AS S ";
+        $query  = "SELECT l.bill_id, unix_timestamp(convert_tz(b.date,'+00:00','+02:00'))*1000 AS D, SUM(l.quantity*l.unitPriceVAT*(1-l.discount/100)) AS S ";
         $query .= "FROM line l, bill b WHERE l.quality = ? AND l.bill_id = b.id ";
         $query .= "GROUP BY l.bill_id HAVING S >= 0 ORDER BY b.date ASC";
 
         $results = $db->executeQuery($query, array('Neuf'))->fetchAll();
         foreach ($results as $r) {
-            $key = strval($this->unix_timestamp($r['D']));
+            $key = strval($r['D']);
             if(!array_key_exists($key,$tmpneuf)) { $tmpneuf[$key] = 0; }
-            $tmpneuf[$key] += floatval($r['S']);
+            $tmpneuf[$key] += round(floatval($r['S']),2);
         }
-        foreach ($tmpneuf as $k => $v){ array_push($neuf, array($k, $v)); }
+        foreach ($tmpneuf as $k => $v){ array_push($neuf, array(doubleval($k), $v)); }
 
         $results = $db->executeQuery($query, array('Occasion'))->fetchAll();
         foreach ($results as $r) {
-            $key = strval($this->unix_timestamp($r['D']));
+            $key = strval($r['D']);
             if(!array_key_exists($key,$tmpoccasion)) { $tmpoccasion[$key] = 0; }
-            $tmpoccasion[$key] += floatval($r['S']);
+            $tmpoccasion[$key] += round(floatval($r['S']),2);
         }
-        foreach ($tmpoccasion as $k => $v){ array_push($occasion, array($k, $v)); }
+        foreach ($tmpoccasion as $k => $v){ array_push($occasion, array(doubleval($k), $v)); }
 
         /* Remise */
-        $query  = "SELECT l.bill_id, unix_timestamp(b.date)*1000 AS D, SUM(l.quantity*l.unitPriceVAT*(l.discount/100)) AS S ";
+        $query  = "SELECT l.bill_id, unix_timestamp(convert_tz(b.date,'+00:00','+02:00'))*1000 AS D, SUM(l.quantity*l.unitPriceVAT*(l.discount/100)) AS S ";
         $query .= "FROM line l, bill b WHERE l.bill_id = b.id GROUP BY l.bill_id ORDER BY b.date ASC";
         $results = $db->executeQuery($query)->fetchAll();
         foreach ($results as $r) {
-            $key = strval($this->unix_timestamp($r['D']));
+            $key = strval($r['D']);
             if(!array_key_exists($key,$tmpremise)) { $tmpremise[$key] = 0; }
-            $tmpremise[$key] += floatval($r['S']);
+            $tmpremise[$key] += round(floatval($r['S']),2);
         }
-        foreach ($tmpremise as $k => $v){ array_push($remise, array($k, $v)); }
+        foreach ($tmpremise as $k => $v){ array_push($remise, array(doubleval($k), $v)); }
 
         $results = array("neuf" => $neuf, "occasion" => $occasion, "remise" => $remise);
 
         return new Response($serializer->serialize($results, 'json'), 200, array('Content-type' => 'application/json'));
-    }
-
-    private function unix_timestamp($date) {
-        /*$tmp = explode('-', $date);
-        array_walk($tmp, 'intval');
-        return mktime(0, 0, 0, $tmp[1], $tmp[2], $tmp[0]);*/
-        return $date;
     }
 }
