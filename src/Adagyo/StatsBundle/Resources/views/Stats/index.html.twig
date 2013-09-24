@@ -22,10 +22,10 @@
 
 {% block javascripts %}
 <script src="{{ asset('js/highcharts/highstock.js') }}"></script>
-    <script src="{{ asset('js/highcharts/themes/gray.js') }}"></script>
+<script src="{{ asset('js/highcharts/themes/gray.js') }}"></script>
+    <script src="{{ asset('js/highcharts/modules/exporting.js') }}"></script>
 <script>
     $(function() {
-        var d = new Date();
         initModal();
         $('#modalMsg').modal({ keyboard: false, backdrop: 'static', show: false });
         $('#modalMsg').on('hidden', function() { initModal(); });
@@ -36,15 +36,19 @@
                 months: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
                 weekdays: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
                 shortMonths: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Oct', 'Nov', 'Dec'],
+                rangeSelectorFrom: "Du",
+                rangeSelectorTo: "Au",
+                thousandsSep: " ",
+                contextButtonTitle: "Ouvrir le menu",
+                downloadJPEG: "Export JPEG",
+                downloadPDF: "Export PDF",
+                downloadPNG: "Export PNG",
+                downloadSVG: "Export SVG",
+                printChart: "Imprimer"
             }
         });
 
-        $.ajax({
-            type: 'GET',
-            url: '{{ path('ajax_stats_ca') }}',
-            dataType: 'json',
-            success: function(data) {
-                console.log(data);
+        $.getJSON('{{ path('ajax_stats_ca') }}', function(data) {
                 $('#chartCA').highcharts("StockChart", {
                     chart: { type: 'column' },
                     credits: { enabled: false },
@@ -54,9 +58,8 @@
                         column: {
                             stacking: "normal",
                             dataGrouping: {
-                                groupPixelWidth: 50,
-                                units: [[ 'day', [7,30,31] ],
-                                        [ 'week', [4,5] ],
+                                groupPixelWidth: 100,
+                                units: [[ 'week', [1] ],
                                         [ 'month', [1,3,6] ],
                                         [ 'year', [1]
                                 ]],
@@ -66,12 +69,14 @@
                                 }
                             }
                         },
-                        series: {
-                            turboThreshold: 0
-                        }
+                        series: { turboThreshold: 0 }
                     },
                     rangeSelector: {
                         buttons: [{
+                            type: 'week',
+                            count: 1,
+                            text: '1s'
+                        },{
                             type: 'month',
                             count: 1,
                             text: '1m'
@@ -89,9 +94,13 @@
                             text: '1a'
                         }, {
                             type: 'ytd',
-                            text: d.getFullYear()
+                            text: 'YTD'
+                        }, {
+                            type: 'all',
+                            text: 'All'
                         }],
-                        selected: 0
+                        selected: 0,
+                        inputDateFormat: "%d %b %Y"
                     },
                     series: [{
                         name: "Neuf",
@@ -128,17 +137,18 @@
                             }
                         }
                     }
+                }, function(chart) { // apply the date pickers
+                    setTimeout(function () { $('input.highcharts-range-selector', $(chart.container).parent()).datepicker(); }, 0);
                 });
                 successModal(false,0);
-            },
-            error: function(jqXHR) {
-                $('#modal-content-ko > .alert').html('');
-                var errors = $.parseJSON(jqXHR.responseText);
-                for( var i = 0; i < errors['errors'].length; i++) { $('#modal-content-ko > .alert').append(errors['errors'][i].message + "<br />"); }
-                errorModal();
-            }
         });
 
+        // Set the datepicker's date format
+        $.datepicker.setDefaults({ changeMonth: true, changeYear: true, regional: "fr", showButtonPanel: true, dateFormat: 'yy-mm-dd', onSelect: function(dateText) { this.onchange(); this.onblur(); } });
+
     });
+
+
 </script>
 {% endblock %}
+
