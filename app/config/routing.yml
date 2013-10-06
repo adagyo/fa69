@@ -20,9 +20,16 @@ bill_search:
 
 cust_search:
     pattern: /cutomers
-    defaults: { _controller: AdagyoFA69Bundle:Cust:search }
+    defaults: { _controller: AdagyoFA69Bundle:Customer:search }
     requirements:
         _method: GET
+
+cust_edit:
+    pattern: /cutomers/{id}
+    defaults: { _controller: AdagyoFA69Bundle:Customer:edit }
+    requirements:
+        _method: GET
+        id: \d+
 
 utils_changepassword_success:
     pattern: /profile/change-password-success
@@ -77,6 +84,12 @@ ajax_product:
 ajax_bill_search:
     pattern: /ajax/bill/search
     defaults: { _controller: AdagyoFA69Bundle:Ajax:searchBill }
+    requirements:
+            _method: POST
+
+ajax_customer_search:
+    pattern: /ajax/customer/search
+    defaults: { _controller: AdagyoFA69Bundle:Ajax:searchCustomer }
     requirements:
             _method: POST
 

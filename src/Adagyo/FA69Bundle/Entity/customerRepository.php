@@ -13,4 +13,15 @@ class customerRepository extends EntityRepository {
             ->getQuery()
             ->getResult();
     }
+
+    public function findCustomerByName($name,$offset,$limit) {
+        return $this->createQueryBuilder('c')
+            ->where('c.lastname LIKE :search')
+            ->setParameter('search',$name)
+            ->orderBy('c.lastname')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 }

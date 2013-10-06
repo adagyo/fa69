@@ -9,8 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Response;
-use Adagyo\FA69Bundle\Entity\customer;
-use Adagyo\FA69Bundle\Entity\car;
 
 
 class BillController extends Controller {

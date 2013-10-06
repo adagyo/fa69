@@ -1,0 +1,201 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row offset1 span7">
+            <form class="form-horizontal" action="#" id="searchFrm">
+                <fieldset>
+                    <legend>Rechercher un client <i class="icon-chevron-down" id="showHide" title="Afficher/Masquer le formulaire de recherche"></i> </legend>
+                    <div id="frm">
+                        <div class="control-group">
+                            <label class="control-label" for="customerId">Numéro: </label>
+                            <div class="controls">
+                                <input type="number" id="customerId" class="span4">
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="customerName">Nom: </label>
+                            <div class="controls">
+                                <input type="text" id="customerName" class="span4">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <a class="btn btn-danger span2" id="reset"><i class="icon-remove icon-white"></i> Réinitialiser</a>
+                            <a class="btn btn-success span2" id="search"><i class="icon-search icon-white"></i> Chercher</a>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        <div class="row">
+            <table class="table table-striped table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th class="span1"><a class="head" href="#" data-sort="id" data-sortorder="ASC">N°</a></th>
+                        <th class="span3"><a class="head" href="#" data-sort="name" data-sortorder="ASC">Client</a></th>
+                        <th class="span3"><a class="head" href="#" data-sort="phone" data-sortorder="ASC">Tel.</a></th>
+                        <th class="span3"><a class="head" href="#" data-sort="mobile" data-sortorder="ASC">Mob.</a></th>
+                    </tr>
+                </thead>
+                <tbody id="searchResults">
+                    <tr>
+                        <td colspan="4">Aucun résultats</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- modals -->
+    <div id="modalMsg" class="modal hide">
+        <div class="modal-header"><h3>Recherche en cours...</h3></div>
+        <div class="modal-body">
+            <div id="modal-content-init"><div class="progress progress-info progress-striped active"><div class="bar" style="width: 100%">Veuillez patienter</div></div></div>
+            <div id="modal-content-ok"><div class="alert alert-success">...</div></div>
+            <div id="modal-content-ko"><div class="alert alert-error">errors</div></div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" id="btn-close" data-dismiss="modal" aria-hidden="true">Fermer</a>
+        </div>
+    </div>
+
+    <div id="customer" class="hide">
+        <iframe id="ifCustomer" style="width: 98%; height: 95%" src=""></iframe>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function () {
+            var results;
+
+            initModal();
+            $('#modalMsg').modal({ keyboard: false, backdrop: 'static', show: false });
+            $('#modalMsg').on('hidden', function() { initModal(); });
+
+            $('#customer').dialog({
+                height: 600,
+                width: 900,
+                modal: true,
+                autoOpen: false,
+                buttons: {
+                    "Fermer" : function() {
+                        $( this ).dialog( "close" );
+                    }
+                }
+            });
+
+            $('#reset').on('click', function(e) { document.forms[0].reset(); cleanResults(true); $('#customerId').val(''); results = null; });
+            $('#showHide').on('click', function(e) { $('#frm').slideToggle(); $(this).toggleClass('icon-chevron-down icon-chevron-right'); });
+            $('#search').on('click', function(e) {
+                $('#modalMsg').modal('show');
+                $.ajax({
+                    url: "{{ path('ajax_customer_search') }}",
+                    dataType: "json",
+                    method: "POST",
+                    data: {
+                        customerId : $('#customerId').val(),
+                        customerName  : $('#customerName').val(),
+                        limit: 50,
+                        offset: 0
+                    },
+                    success: function(data) {
+                        results = new Array();
+                        for(i = 0; i < data.results.length; i++) {
+                            results[i] = { id: data.results[i].id,
+                                           name: (data.results[i].lastname+' '+data.results[i].firstname).trim(),
+                                           phone: data.results[i].phone,
+                                           mobile: data.results[i].mobile
+                            };
+                        }
+                        showResponse();
+                        successModal(false,0);
+                    },
+                    error: function(data) {
+                        errorModal(data.responseText);
+                    }
+                });
+            });
+            $('.head').on('click', function(e) {
+                e.preventDefault();
+                console.log("Sort by " + $(this).attr('data-sort') + " " + $(this).attr('data-sortorder'));
+                results = sortHashTable(results, $(this).attr('data-sort'),$(this).attr('data-sortorder'));
+                $(this).attr('data-sortorder', $(this).attr('data-sortorder') == 'ASC' ? 'DESC' : 'ASC');
+                showResponse();
+            })
+
+            $(document).on('click','a.pageBtn',function(e){
+                e.preventDefault();
+                toPage = parseInt($(this).attr('data-page'));
+                offset = (toPage-1)*10;
+                if((toPage > 0) && (toPage < 6)){
+                    showResponse(offset);
+                    $('.prevPage').attr('data-page',toPage-1);
+                    $('.nextPage').attr('data-page',toPage+1);
+                }
+            });
+            $(document).on('click','tr.result',function(e){
+                e.preventDefault();
+                customerId = $(this).attr('data-custid');
+                route = '{{ path('cust_edit',{'id':0}) }}';
+                goto = route.substr(0,route.length-1) + customerId;
+                document.location.href=goto;
+            });
+
+
+            function showResponse(offset, limit) {
+                offset = typeof offset !== 'undefined' ? offset : 0;
+                limit = typeof limit !== 'undefined' ? limit : 10;
+                nbResults = results.length;
+
+                if(nbResults > 0) {
+                    cleanResults(false);
+                    loopUntil = offset + limit;
+                    if(loopUntil > nbResults) { loopUntil = nbResults; }
+                    for(i = offset; i < loopUntil; i++) {
+                        line  = '<tr class="result" data-custid="'+results[i].id+'"><td>'+results[i].id+'</td>';
+                        line += '<td>'+results[i].name+'</td>';
+                        line += '<td>'+results[i].phone+'</td>';
+                        line += '<td>'+results[i].mobile+'</td></tr>';
+                        $('#searchResults').append(line);
+                    }
+                    if(nbResults > limit) { $('#searchResults').append(getPagination(offset,limit)); }
+                } else {
+                    cleanResults(true);
+                    $('#searchResults > tr > td').effect('highlight',{ duration: 2000, color: '#ff9999' });
+                }
+            }
+
+            function getPagination(offset, limit) {
+                nbResults = results.length;
+                currentPage = offset/limit + 1;
+                nbPages = Math.ceil(nbResults/limit);
+
+                pager  = '<tr><td colspan="4"><div class="pagination pagination-centered"><ul><li class="';
+                if(currentPage == 1) { pager += 'disabled'; }
+                pager += '"><a class="pageBtn prevPage" data-page="1" href="#">&laquo;</a></li>';
+
+                for(i = 1; i <= nbPages; i++) {
+                    pager += '<li class="';
+                    if(i == currentPage) { pager += 'active'; }
+                    pager += '"><a class="pageBtn" data-page="'+i+'" href="#">' + i + '</a></li>';
+                }
+
+                pager += '<li class="';
+                if(currentPage == nbPages) { pager += 'disabled'; }
+                pager += '"><a class="pageBtn nextPage" data-page="2" href="#">&raquo;</a></li></ul></div></td></tr>';
+                return pager;
+            }
+
+            function cleanResults(showMessage) {
+                showMessage = typeof showMessage !== 'undefined' ? showMessage : false;
+                $('#searchResults').children('tr').remove();
+                if(showMessage === true) {
+                    $('#searchResults').append('<tr><td colspan="4">Aucun résultats</td></tr>');
+                }
+            }
+        });
+
+    </script>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        {{ form_start(form, { 'attr' : { 'class' : 'form-horizontal', 'id' : 'edit-cutstomer-form', 'autocomplete' : 'off' } }) }}
+
+        <div id="Customer" class="offset1">
+            <div class="control-group">
+                <label class="control-label" for="cnum">Numéro: </label>
+                <div class="controls">
+                    {{ form_widget(form.id, { 'attr' : { 'class' : 'span5 uneditable-input Customer', 'readonly' : 'true' } }) }}
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="cciv">Civilité: </label>
+                <div class="controls">
+                    {{ form_widget(form.civility, { 'attr' : { 'class' : 'span5 Customer' } }) }}
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="clname">Nom: </label>
+                <div class="controls">
+                    {{ form_widget(form.lastname, { 'attr' : { 'class' : 'span5 Customer' } }) }}
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="cfname">Prénom: </label>
+                <div class="controls">
+                    {{ form_widget(form.firstname, { 'attr' : { 'class' : 'span5 Customer' } }) }}
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="cstreet">Adresse: </label>
+                <div class="controls">
+                    {{ form_widget(form.address, { 'attr' : { 'class' : 'span5 Customer' } }) }}
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="ccp">Code postal: </label>
+                <div class="controls">
+                    {{ form_widget(form.postalcode, { 'attr' : { 'class' : 'span5 Customer' } }) }}
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="ccity">Ville: </label>
+                <div class="controls">
+                    {{ form_widget(form.city, { 'attr' : { 'class' : 'span5 Customer' } }) }}
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="cphone">Téléphone: </label>
+                <div class="controls">
+                    {{ form_widget(form.phone, { 'attr' : { 'class' : 'span5 Customer' } }) }}
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label" for="cmobile">Portable: </label>
+                <div class="controls">
+                    {{ form_widget(form.mobile, { 'attr' : { 'class' : 'span5 Customer' } }) }}
+                </div>
+            </div>
+        </div>
+        <!-- End of customer's frm -->
+    </div>
+{% endblock %}

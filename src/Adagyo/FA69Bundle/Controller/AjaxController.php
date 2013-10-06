@@ -334,6 +334,30 @@ class AjaxController extends Controller {
         return new Response($serializer->serialize(array("results" => $results), 'json'), 200, array('Content-type' => 'application/json'));
     }
 
+    public function searchCustomerAction() {
+        $request = $this->getRequest();
+        $em = $this->getDoctrine()->getManager();
+        $serializer = $this->get('jms_serializer');
+
+        $customerId = $request->get('customerId');
+        $customerName = $request->get('customerName');
+        $limit =  $request->get('limit');
+        $offset =  $request->get('offset');
+
+        $results = null;
+        $repository = $em->getRepository('AdagyoFA69Bundle:customer');
+        if($customerId) {
+            $results = array($repository->find($customerId));
+        } elseif($customerName) {
+            $customerName = str_replace('*','%',$customerName);
+            $results = $repository->findCustomerByName($customerName,$offset,$limit);
+        }else {
+            return new Response('Veuillez replir au moins un champ du formulaire de recherche SVP!',400);
+        }
+
+        return new Response($serializer->serialize(array("results" => $results), 'json'), 200, array('Content-type' => 'application/json'));
+    }
+
     public function getBillAction() {
         $request = $this->getRequest();
         $em = $this->getDoctrine()->getManager();
