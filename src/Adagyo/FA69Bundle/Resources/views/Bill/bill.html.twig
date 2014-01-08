@@ -48,12 +48,12 @@
                     </tr>
                     {% for i in 0..16 %}
                     <tr>
-                        <td style="text-align: center;" class="bRight p1">{% if  lines[i].quantity > 0 %}{{ lines[i].quantity }}{% else %}&nbsp;{% endif %}</td>
+                        <td style="text-align: center;" class="bRight p1">{% if  lines[i].quantity > 0 %}{{ lines[i].quantity }}{% elseif lines[i].quantity < 0 %}{{ lines[i].quantity * -1 }}{% else %}&nbsp;{% endif %}</td>
                         <td style="text-align: left; width: 117mm" class="bRight p1">{{ lines[i].lineLabel }}</td>
                         <td style="text-align: right;" class="bRight p1">{% if  (lines[i].quantity > 0) and (lines[i].quality == 'Neuf') %}{{ (lines[i].unitPriceVAT / (1 + vatRate / 100))|number_format(2,',','')  }}{% endif %}</td>
                         <td style="text-align: right;" class="bRight p1">{% if  lines[i].quantity > 0 %}{{ lines[i].unitPriceVAT|number_format(2,',','') }}{% endif %}</td>
                         <td style="text-align: right;" class="bRight p1">{% if  lines[i].quantity > 0 %}{{ lines[i].discount|number_format(2,',','') }}{% endif %}</td>
-                        <td style="text-align: right;" class="p1">{% if lines[i].discount == 100 %}OFFERT{% elseif  lines[i].quantity > 0 %}{{ (lines[i].quantity * (lines[i].unitPriceVAT * (1 - lines[i].discount / 100)))|number_format(2,',','') }}{% endif %}</td>
+                        <td style="text-align: right;" class="p1">{% if lines[i].discount == 100 %}OFFERT{% elseif  lines[i].quantity > 0 or lines[i].quantity < 0 %}{{ (lines[i].quantity * (lines[i].unitPriceVAT * (1 - lines[i].discount / 100)))|number_format(2,',','') }}{% endif %}</td>
                     </tr>
                     {% endfor %}
                 </table>

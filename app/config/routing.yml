@@ -13,10 +13,11 @@ bill_create:
         _method: GET
 
 bill_search:
-    pattern: /bills
-    defaults: { _controller: AdagyoFA69Bundle:Bill:search }
+    pattern: /bills/{customerid}
+    defaults: { _controller: AdagyoFA69Bundle:Bill:search, customerid: '' }
     requirements:
         _method: GET
+        customerid: \d+
 
 cust_search:
     pattern: /cutomers

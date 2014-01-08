@@ -71,4 +71,75 @@
         </div>
         <!-- End of customer's frm -->
     </div>
+
+    <div class="row">
+        <div class="form-actions">
+            <div class="span3"></div>
+            <a href="#" class="btn btn-warning span2" type="button" id="edit" title="mets à jour le client sélectionné"><i class="icon-edit icon-white"></i> <span>Mise à jour</span></a>
+            <a href="#" class="btn btn-info span2" type="button" id="bills" title="Afficher les factures de ce client"><i class="icon-file icon-white"></i> <span>Voir les factures</span></a>
+        </div>
+    </div>
+
+    <!-- modals -->
+    <div id="modalMsg" class="modal hide">
+        <div class="modal-header"><h3>Enregistrement en cours...</h3></div>
+        <div class="modal-body">
+            <div id="modal-content-init"><div class="progress progress-info progress-striped active"><div class="bar" style="width: 100%">Veuillez patienter</div></div></div>
+            <div id="modal-content-ok"><div class="alert alert-success">Client enregistré avec succès</div></div>
+            <div id="modal-content-ko"><div class="alert alert-error">errors</div></div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" id="btn-close" data-dismiss="modal" aria-hidden="true">Fermer</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $(function () {
+        var civilities = ['Madame', 'Mademoiselle', 'Monsieur', 'Société'];
+
+        initModal();
+
+        $('#{{ form.lastname.vars.id }}').focus();
+        $('#{{ form.civility.vars.id }}').autocomplete({ source: civilities, minLength: 0, autoFocus: true });
+        $('#{{ form.civility.vars.id }}').on('focus', function(e) {$('#{{ form.civility.vars.id }}').autocomplete("search",""); });
+
+        $('#edit').click(function (e){
+            e.preventDefault();
+            $('#modalMsg').modal('show');
+            $.ajax({
+                type: 'POST',
+                url: "{{ path('ajax_customer_edit') }}",
+                dataType: "json",
+                cache: false,
+                data: {
+                    id          : $('#{{ form.id.vars.id }}').val(),
+                    civility    : $('#{{ form.civility.vars.id }}').val(),
+                    lastname    : $('#{{ form.lastname.vars.id }}').val(),
+                    firstname   : $('#{{ form.firstname.vars.id }}').val(),
+                    address     : $('#{{ form.address.vars.id }}').val(),
+                    postalcode  : $('#{{ form.postalcode.vars.id }}').val(),
+                    city        : $('#{{ form.city.vars.id }}').val(),
+                    phone       : $('#{{ form.phone.vars.id }}').val(),
+                    mobile      : $('#{{ form.mobile.vars.id }}').val()
+                },
+                success: function(data) {
+                    $('#{{ form.id.vars.id }}').val(data.id);
+                    successModal();
+                },
+                error: function(jqXHR) {
+                    $('#modal-content-ko > .alert').html('');
+                    var errors = $.parseJSON(jqXHR.responseText);
+                    for( var i = 0; i < errors['errors'].length; i++) { $('#modal-content-ko > .alert').append(errors['errors'][i].message + "<br />"); }
+                    errorModal();
+                }
+            });
+        });
+
+        $('#bills').click(function (e){
+            window.location.href = "{{ path('bill_search') }}/" + $('#{{ form.id.vars.id }}').val();
+        });
+    });
+</script>
 {% endblock %}

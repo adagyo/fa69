@@ -86,7 +86,7 @@ class AjaxController extends Controller {
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($cust);
                 $em->flush();
-                return new Response($serializer->serialize($cust, 'json'), 201, array('Content-type' => 'application/json'));
+                return new Response($serializer->serialize($cust, 'json'), 200, array('Content-type' => 'application/json'));
             }
         }
     }

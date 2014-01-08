@@ -17,3 +17,11 @@ Installation:
     * php app/console doctrine:fixtures:load
     * charger les données à partir du job TALEND
     * exécuter le script SQL suivant: UPDATE bill SET `vatRate_id` = (SELECT id FROM vat where isCurrent = 1);
+
+Problèmes connus:
+------------------
+
+    * Mineure / cosmétique:
+        * Nouvelle facture / étape 2 (Véhicule): Si on tente de passer à l'étape suivante sans véhicule, l'autocomplete des immatriculations affiche une ligne vide
+        * Nouvelle facture / étape 2 (Véhicule): Lorsqu'on valide la création d'un nouveau véhicule, le texte de la popup indique "Client créé" et non "Véhicule"
+        * Nouvelle facture / impression: Revoir la popup (moche avec les ascenceurs, voir pour utiliser le même module que pour la recherche de facture)

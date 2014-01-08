@@ -25,7 +25,7 @@ class BillController extends Controller {
         return $this->render('AdagyoFA69Bundle:Bill:create.html.twig', array('form' => $form->createView()));
     }
 
-    public function searchAction() {
-        return $this->render('AdagyoFA69Bundle:Bill:search.html.twig');
+    public function searchAction($customerid) {
+        return $this->render('AdagyoFA69Bundle:Bill:search.html.twig', array('customerid' => $customerid));
     }
 }
