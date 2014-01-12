@@ -26,6 +26,7 @@ class BillController extends Controller {
     }
 
     public function searchAction($customerid) {
+        $customerid = ($customerid > 0) ? $customerid : '';
         return $this->render('AdagyoFA69Bundle:Bill:search.html.twig', array('customerid' => $customerid));
     }
 }
