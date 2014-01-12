@@ -48,8 +48,6 @@
                                     {% if is_granted('ROLE_SUPER_ADMIN') %}
                                     <li><a href="{{ path('admin_vat') }}"><i class="icon-briefcase"></i> Paramètres</a></li>
                                     <li class="divider"></li>
-                                    <li><a href="#"><i class="icon-wrench"></i> Accès Base de données</a></li>
-                                    <li class="divider"></li>
                                     {% endif %}
                                     <li><a href="{{ path('fos_user_security_logout') }}"><i class="icon-share"></i> Déconnexion</a></li>
                                 </ul>
