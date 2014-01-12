@@ -463,6 +463,13 @@
                             },
                             success: function(data) {
                                 $('#{{ form.car.id.vars.id }}').val(data.id);
+                                selected_cars.push({
+                                    id          : $('#{{ form.car.id.vars.id }}').val(),
+                                    reg_plate   : $('#{{ form.car.regPlate.vars.id }}').val(),
+                                    brand       : $('#{{ form.car.brand.vars.id }}').val(),
+                                    year        : $('#{{ form.car.year.vars.id }}').val(),
+                                    mileage     : $('#{{ form.car.mileage.vars.id }}').val()
+                                });
                                 successModal();
                             },
                             error: function(jqXHR) {
@@ -571,13 +578,6 @@
                         if($('#{{ form.car.id.vars.id }}').val() != '') { errorModal('La duplication de véhicule est interdite, veuillez cliquer sur le bouton de mise à jour si vous souhaitez modifier ses informations.'); }
                         else {
                             ajaxRequest('{{ path('ajax_car_save') }}');
-                            selected_cars.push({
-                                id          : $('#{{ form.car.id.vars.id }}').val(),
-                                reg_plate   : $('#{{ form.car.regPlate.vars.id }}').val(),
-                                brand       : $('#{{ form.car.brand.vars.id }}').val(),
-                                year        : $('#{{ form.car.year.vars.id }}').val(),
-                                mileage     : $('#{{ form.car.mileage.vars.id }}').val()
-                            });
                         }
                         break;
                 }

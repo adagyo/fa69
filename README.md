@@ -22,5 +22,4 @@ Problèmes connus:
 ------------------
 
     * Mineure / cosmétique:
-        * Nouvelle facture / étape 2 (Véhicule): Si on tente de passer à l'étape suivante sans véhicule, l'autocomplete des immatriculations affiche une ligne vide
         * Nouvelle facture / impression: Revoir la popup (moche avec les ascenceurs, voir pour utiliser le même module que pour la recherche de facture)
