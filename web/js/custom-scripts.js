@@ -34,6 +34,7 @@ function goToStep(from, to) {
             $('#reset').removeClass('disabled');
             $('#next').attr('title',"Passe à l'étape suivante").children("span").html('Suivant');
             $('#next').children('i').removeClass('icon-print').addClass('icon-forward');
+            $('#modal-content-ok').children("div").html("Client enregistré avec succès");
             break;
         case 'Car':
             $('#prev').removeClass('disabled');
@@ -42,6 +43,7 @@ function goToStep(from, to) {
             $('#reset').removeClass('disabled');
             $('#next').attr('title',"Passe à l'étape suivante").children("span").html('Suivant');
             $('#next').children('i').removeClass('icon-print').addClass('icon-forward');
+            $('#modal-content-ok').children("div").html("Véhicule enregistré avec succès");
             break;
         case 'Bill':
             $('#prev').removeClass('disabled');
