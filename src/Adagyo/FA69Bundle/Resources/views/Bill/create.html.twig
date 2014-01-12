@@ -232,17 +232,10 @@
     </div>
 
     <!-- print modal -->
-    <div id="printableBill" class="modal hide">
-        <div class="modal-header"><h3>Facture n°</h3></div>
-        <div class="modal-body">
-            <iframe id="iPrintable" src="" style="width: 100%; height: 200px"></iframe>
-        </div>
-        <div class="modal-footer">
-            <a class="btn btn-info" id="print"><i class="icon-print icon-white"></i> Imprimer</a>
-            <a class="btn btn-warning" id="btn-close" data-dismiss="modal" aria-hidden="true">Modifier la facture</a>
-            <a class="btn btn-success" id="done"><i class="icon-ok icon-white"></i> Terminer</a>
-        </div>
+    <div id="bill" class="hide">
+        <iframe id="ifBill" style="width: 98%; height: 95%" src=""></iframe>
     </div>
+
 {% endblock %}
 
 {% block javascripts %}
@@ -266,7 +259,27 @@
             $('.btn-unclickable').click(function (e) { e.preventDefault(); });
             $('#modalMsg').modal({ keyboard: false, backdrop: 'static', show: false });
             $('#modalMsg').on('hidden', function() { initModal(); });
-            $('#printableBill').modal({ keyboard: true, backdrop: 'static', show: false, width: 800, height: 500 });
+
+            $('#bill').dialog({
+                height: 600,
+                width: 900,
+                modal: true,
+                autoOpen: false,
+                buttons: {
+                    "Imprimer": function() {
+                        window.frames['ifBill'].focus();
+                        window.frames['ifBill'].print();
+                    },
+                    "Modifier la facture" : function() {
+                        $( this ).dialog( "close" );
+                    },
+                    "Terminer" : function() {
+                        window.location.href = '{{ path('homepage') }}';
+                    }
+                }
+            });
+
+
             $('#{{ form.customer.civility.vars.id }}').autocomplete({ source: civilities, minLength: 0, autoFocus: true });
             $('#{{ form.customer.civility.vars.id }}').on('focus', function(e) {$('#{{ form.customer.civility.vars.id }}').autocomplete("search",""); });
 
@@ -536,10 +549,10 @@
                             },
                             success: function(data) {
                                 $('#modalMsg').modal('hide');
-                                $('#iPrintable').attr('src',data.billPdf);
-                                $('#printableBill').modal('show');
                                 $('#{{ form.id.vars.id }}').val(data.billId);
-                                $('#printableBill .modal-header h3').html('Facture n°'+data.billId);
+                                $('#ifBill').attr('src',data.billPdf);
+                                $('#bill').dialog({ title: 'Facture n°' + data.billId }).dialog("open");
+
                             },
                             error: function(error) {
                                 errorModal(error);

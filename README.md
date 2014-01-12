@@ -21,5 +21,4 @@ Installation:
 Problèmes connus:
 ------------------
 
-    * Mineure / cosmétique:
-        * Nouvelle facture / impression: Revoir la popup (moche avec les ascenceurs, voir pour utiliser le même module que pour la recherche de facture)
+    * Aucun
