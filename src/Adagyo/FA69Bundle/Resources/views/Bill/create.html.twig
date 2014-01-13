@@ -244,7 +244,7 @@
             var civilities = ['Madame', 'Mademoiselle', 'Monsieur', 'Société'];
             var methods = ['Espèce', 'Chèque', 'CB', 'Top 3'];
 
-            var quals = ['Neuf', 'Occasion'];
+            var quals = ['', 'Neuf', 'Occasion', 'ECH-ST'];
             var selected_cars = [];
             var currentStep = goToStep('_', 'Customer');
             var vatRate = $('#{{ form.vatRate.rate.vars.id }}').val().replace(',','.');
@@ -379,7 +379,7 @@
                         lineTotal = (unitprice * (1 - discount / 100)) * quantity;
                         totalAmount += lineTotal;
                         totalDiscount += (unitprice * quantity) - lineTotal;
-                        if(quality == 'Neuf' || quality == '') {
+                        if(quality == 'Neuf' || quality == '' || quality == 'ECH-ST') {
                             totalVATNewPart += lineTotal;
                             lineExVATTotal = lineTotal / (1 + (vatRate / 100));
                             totalExVATNewPart += lineExVATTotal;

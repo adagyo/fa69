@@ -49,7 +49,7 @@
                     {% for i in 0..16 %}
                     <tr>
                         <td style="text-align: center;" class="bRight p1">{% if  lines[i].quantity > 0 %}{{ lines[i].quantity }}{% elseif lines[i].quantity < 0 %}{{ lines[i].quantity * -1 }}{% else %}&nbsp;{% endif %}</td>
-                        <td style="text-align: left; width: 117mm" class="bRight p1">{{ lines[i].lineLabel }}</td>
+                        <td style="text-align: left; width: 117mm" class="bRight p1">{{ lines[i].lineLabel }}{% if lines[i].quality != '' %} - {{ lines[i].quality }}{% endif %}</td>
                         <td style="text-align: right;" class="bRight p1">{% if  (lines[i].quantity > 0) and ((lines[i].quality == 'Neuf') or (lines[i].quality == '')) %}{{ (lines[i].unitPriceVAT / (1 + vatRate / 100))|number_format(2,',','')  }}{% endif %}</td>
                         <td style="text-align: right;" class="bRight p1">{% if  lines[i].quantity > 0 %}{{ lines[i].unitPriceVAT|number_format(2,',','') }}{% endif %}</td>
                         <td style="text-align: right;" class="bRight p1">{% if  lines[i].quantity > 0 %}{{ lines[i].discount|number_format(2,',','') }}{% endif %}</td>
