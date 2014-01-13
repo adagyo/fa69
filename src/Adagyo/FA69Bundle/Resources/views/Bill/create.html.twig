@@ -379,7 +379,7 @@
                         lineTotal = (unitprice * (1 - discount / 100)) * quantity;
                         totalAmount += lineTotal;
                         totalDiscount += (unitprice * quantity) - lineTotal;
-                        if(quality == 'Neuf') {
+                        if(quality == 'Neuf' || quality == '') {
                             totalVATNewPart += lineTotal;
                             lineExVATTotal = lineTotal / (1 + (vatRate / 100));
                             totalExVATNewPart += lineExVATTotal;
