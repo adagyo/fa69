@@ -15,6 +15,12 @@ use Adagyo\FA69Bundle\Entity\car;
 
 
 class AjaxController extends Controller {
+
+    const ML = 7;
+    const MT = 57;
+    const MR = 7;
+    const MB = 35;
+
     public function getCustomerAction() {
         $request = $this->getRequest();
         $field = $request->get('field');
@@ -187,7 +193,7 @@ class AjaxController extends Controller {
         $repository = $em->getRepository('AdagyoFA69Bundle:car');
         $car = $repository->find($request->get('carId'));
 
-        $html2pdf = new Html2Pdf('P','A4','fr',true,'UTF-8',array(7,67,7,35));
+        $html2pdf = new Html2Pdf('P','A4','fr',true,'UTF-8',array(self::ML,self::MT,self::MR,self::MB));
         $html = $this->renderView('AdagyoFA69Bundle:Bill:bill.html.twig', array(
             'billId'    => '----------',
             'customer'  => $customer,
@@ -279,7 +285,7 @@ class AjaxController extends Controller {
         $file = 'Facture_' . $bill->getId() . '.pdf';
         $tmp = $rootDir . '/web/bills/' . $file;
 
-        $html2pdf = new Html2Pdf('P','A4','fr',true,'UTF-8',array(7,67,7,35));
+        $html2pdf = new Html2Pdf('P','A4','fr',true,'UTF-8',array(self::ML,self::MT,self::MR,self::MB));
         $html = $this->renderView('AdagyoFA69Bundle:Bill:bill.html.twig', array(
             'billId'    => $bill->getId(),
             'customer'  => $customer,
@@ -387,7 +393,7 @@ class AjaxController extends Controller {
             $linesArr[$idx] = $l;
         }
 
-        $html2pdf = new Html2Pdf('P','A4','fr',true,'UTF-8',array(7,67,7,35));
+        $html2pdf = new Html2Pdf('P','A4','fr',true,'UTF-8',array(self::ML,self::MT,self::MR,self::MB));
         $html = $this->renderView('AdagyoFA69Bundle:Bill:bill.html.twig', array(
             'billId'    => $bill->getId(),
             'customer'  => $bill->getCustomer(),

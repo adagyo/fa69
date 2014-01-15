@@ -17,7 +17,7 @@
     </style>
     <table cellpadding="0" cellspacing="0">
         <tr>
-            <td style="padding-top: 5mm; width: 125mm">
+            <td style="padding-top: 15mm; width: 105mm">
                 <b>Facture n° {{ billId }}</b><br /><br />
                 <i>Marque:</i> {{ car.brand }}<br />
                 <i>Immatriculation:</i> {{ car.regPlate }}<br />
@@ -31,8 +31,8 @@
             </td>
         </tr>
         <tr>
-            <td style="padding-top: 2mm; width: 100mm"><i>Téléphone:</i> {{ customer.phone }} / {{ customer.mobile }}</td>
-            <td style="padding-top: 2mm; width: 75mm">St Bonnet de Mûre le {{ date }}</td>
+            <td style="padding-top: 2mm;"><i>Téléphone:</i> {{ customer.phone }} / {{ customer.mobile }}</td>
+            <td style="padding-top: 2mm;">St Bonnet de Mûre le {{ date }}</td>
         </tr>
         <tr><td colspan="2" style="height: 2mm"></td></tr>
         <tr>
@@ -52,7 +52,7 @@
                         <td style="text-align: left; width: 117mm" class="bRight p1">{{ lines[i].lineLabel }}{% if lines[i].quality != '' %} - {{ lines[i].quality }}{% endif %}</td>
                         <td style="text-align: right;" class="bRight p1">{% if  (lines[i].quantity > 0) and ((lines[i].quality == 'Neuf') or (lines[i].quality == '')) %}{{ (lines[i].unitPriceVAT / (1 + vatRate / 100))|number_format(2,',','')  }}{% endif %}</td>
                         <td style="text-align: right;" class="bRight p1">{% if  lines[i].quantity > 0 %}{{ lines[i].unitPriceVAT|number_format(2,',','') }}{% endif %}</td>
-                        <td style="text-align: right;" class="bRight p1">{% if  lines[i].quantity > 0 %}{{ lines[i].discount|number_format(2,',','') }}{% endif %}</td>
+                        <td style="text-align: right;" class="bRight p1">{% if  lines[i].discount > 0 %}{{ lines[i].discount|number_format(2,',','') }}{% endif %}</td>
                         <td style="text-align: right;" class="p1">{% if lines[i].discount == 100 %}OFFERT{% elseif  lines[i].quantity > 0 or lines[i].quantity < 0 %}{{ (lines[i].quantity * (lines[i].unitPriceVAT * (1 - lines[i].discount / 100)))|number_format(2,',','') }}{% endif %}</td>
                     </tr>
                     {% endfor %}
