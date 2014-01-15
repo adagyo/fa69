@@ -372,7 +372,7 @@ class bill
 
             $lineTotal = ($currPrice * (1 - $currDiscount / 100)) * $currQuantity;
             $this->totalDiscount += ($currPrice * $currQuantity) - $lineTotal;
-            if(strtolower($currQuality) == 'neuf' || $currQuality == '' || $currQuality == 'ECH-ST') {
+            if(strtolower($currQuality) != 'occasion') {
                 $this->totalVATNewPart += $lineTotal;
                 $lineExVATTotal = $lineTotal / (1 + ($this->vatRate->getRate() / 100));
                 $this->totalExVATNewPart += $lineExVATTotal;
