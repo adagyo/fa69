@@ -16,4 +16,14 @@ class carRepository extends EntityRepository {
             ->getQuery()
             ->getResult();
     }
+
+    public function findRegPlate($regPlate) {
+        return $this->createQueryBuilder('c')
+            ->where('c.regPlate LIKE :search')
+            ->setParameter('search', $regPlate.'%')
+            ->orderBy('c.regPlate', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
 }

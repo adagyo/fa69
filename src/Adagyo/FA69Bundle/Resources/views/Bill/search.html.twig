@@ -21,6 +21,13 @@
                             </div>
                         </div>
                         <div class="control-group">
+                            <label class="control-label" for="regPate">Immatriculation: </label>
+                            <div class="controls">
+                                <input type="text" id="regPlate" class="span4">
+                                <input type="hidden" id="carId" value="">
+                            </div>
+                        </div>
+                        <div class="control-group">
                             <label class="control-label" for="dateFrom">Date (à partir du): </label>
                             <div class="controls">
                                 <input type="text" id="dateFrom" class="span4">
@@ -117,6 +124,7 @@
                     data: {
                         billId  : $('#billId').val(),
                         customerId : $('#customerId').val(),
+                        carId : $('#carId').val(),
                         dateFrom : parseDate($('#dateFrom').val(), true),
                         dateTo : parseDate($('#dateTo').val(),true),
                         limit: 50,
@@ -169,6 +177,28 @@
                 },
                 minLength: 2,
                 select: function(event, ui) { $('#customerId').val(ui.item.id); }
+            });
+
+            $('#regPlate').autocomplete({
+                source: function( request, response ) {
+                    $.ajax({
+                        url: "{{ path('ajax_regplate') }}",
+                        dataType: "json",
+                        data: {
+                            search: $('#regPlate').val()
+                        },
+                        success: function( data ) {
+                            response( $.map( data.cars, function( item ) {
+                                return {
+                                    value: item.reg_plate + " (" + item.brand + ")",
+                                    id: item.id
+                                }
+                            }));
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function(event, ui) { $('#carId').val(ui.item.id); }
             });
 
             $(document).on('click','a.pageBtn',function(e){

@@ -34,6 +34,18 @@ class AjaxController extends Controller {
         return new Response($serializer->serialize(array("customers" => $results), 'json'), 200, array('Content-type' => 'application/json'));
     }
 
+    public function getRegPlateAction() {
+        $request = $this->getRequest();
+        $search = $request->get('search');
+        $serializer = $this->get('jms_serializer');
+
+        $repo = $this->getDoctrine()->getRepository('AdagyoFA69Bundle:car');
+
+        $results = $repo->findRegPlate($search);
+
+        return new Response($serializer->serialize(array("cars" => $results), 'json'), 200, array('Content-type' => 'application/json'));
+    }
+
     public function saveCustomerAction() {
         $request = $this->getRequest();
         $cust = new customer();
@@ -318,6 +330,7 @@ class AjaxController extends Controller {
 
         $billId = $request->get('billId');
         $customerId = $request->get('customerId');
+        $carId = $request->get('carId');
         $dateFrom = $request->get('dateFrom');
         $dateTo = $request->get('dateTo');
         $limit =  $request->get('limit');
@@ -330,7 +343,8 @@ class AjaxController extends Controller {
             $results = array($repository->find($billId));
         } elseif($customerId) {
             $results = $repository->getBillsByCustomerId($customerId,$dateFrom,$dateTo,$limit,$offset);
-
+        } elseif($carId) {
+            $results = $repository->getBillsByCarId($carId,$dateFrom,$dateTo,$limit,$offset);
         } elseif($dateFrom || $dateTo) {
             $results = $repository->getBillsByDates($dateFrom,$dateTo,$limit,$offset);
         } else {

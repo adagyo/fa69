@@ -48,6 +48,12 @@ ajax_customer:
     requirements:
         _method: GET
 
+ajax_regplate:
+    pattern: /ajax/regplate
+    defaults: { _controller: AdagyoFA69Bundle:Ajax:getRegPlate }
+    requirements:
+        _method: GET
+
 ajax_customer_save:
     pattern: /ajax/customer/save
     defaults: { _controller: AdagyoFA69Bundle:Ajax:saveCustomer }

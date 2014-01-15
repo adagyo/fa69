@@ -43,4 +43,21 @@ class billRepository extends EntityRepository {
 
         return $bills->getQuery()->getResult();
     }
+
+    public function getBillsByCarId($carId, $dateFrom = null, $dateTo = null) {
+        $bills = $this->createQueryBuilder('b')
+            ->join('b.car', 'c')
+            ->where('c.id = :carId')
+            ->setParameter('carId', $carId)
+            ->orderBy('b.date', 'ASC')
+            ->addOrderBy('b.id', 'ASC');
+        if($dateFrom) {
+            $bills->andWhere('b.date >= :dateFrom')->setParameter('dateFrom', $dateFrom);
+        }
+        if($dateTo) {
+            $bills->andWhere('b.date <= :dateTo')->setParameter('dateTo', $dateTo);
+        }
+
+        return $bills->getQuery()->getResult();
+    }
 }
