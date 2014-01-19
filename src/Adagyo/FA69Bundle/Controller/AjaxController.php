@@ -17,7 +17,7 @@ use Adagyo\FA69Bundle\Entity\car;
 class AjaxController extends Controller {
 
     const ML = 7;
-    const MT = 57;
+    const MT = 52;
     const MR = 7;
     const MB = 35;
 
