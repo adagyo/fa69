@@ -410,6 +410,7 @@ class AjaxController extends Controller {
         $html2pdf = new Html2Pdf('P','A4','fr',true,'UTF-8',array(self::ML,self::MT,self::MR,self::MB));
         $html = $this->renderView('AdagyoFA69Bundle:Bill:bill.html.twig', array(
             'billId'    => $bill->getId(),
+			'carMileage'=> $bill->getCarMileage(),
             'customer'  => $bill->getCustomer(),
             'car'       => $bill->getCar(),
             'date'      => $bill->getDate()->format('d/m/Y'),
