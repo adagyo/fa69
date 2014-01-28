@@ -210,6 +210,7 @@ class AjaxController extends Controller {
             'billId'    => '----------',
             'customer'  => $customer,
             'car'       => $car,
+            'carMileage'=> $request->get('carMileage'),
             'date'      => $request->get('date'),
             'lines'     => $request->get('lines'),
             'totalExVATNewPart' => $request->get('totalExVATNewPart'),
@@ -267,8 +268,12 @@ class AjaxController extends Controller {
 
         $repository = $em->getRepository('AdagyoFA69Bundle:car');
         $car = $repository->find($request->get('carId'));
+        $car->setMileage($request->get('carMileage'));
+        $em->persist($car);
+        $em->flush();
+
         $bill->setCar($car);
-        $bill->setCarMileage($car->getMileage());
+        $bill->setCarMileage($request->get('carMileage'));
 
         foreach($request->get('lines') as $i => $line) {
             if($line['lineLabel'] != '') {
@@ -303,6 +308,7 @@ class AjaxController extends Controller {
             'customer'  => $customer,
             'car'       => $car,
             'date'      => $request->get('date'),
+            'carMileage'=> $request->get('carMileage'),
             'lines'     => $request->get('lines'),
             'totalExVATNewPart' => $request->get('totalExVATNewPart'),
             'totalVATNewPart'   => $request->get('totalVATNewPart'),
