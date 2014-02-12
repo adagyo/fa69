@@ -461,6 +461,7 @@
                         });
                         break;
                     case 'Car':
+                        var toPush = ($('#{{ form.car.id.vars.id }}').val() == '') ? true : false;
                         $.ajax({
                             type: 'POST',
                             url: postUrl,
@@ -476,13 +477,15 @@
                             },
                             success: function(data) {
                                 $('#{{ form.car.id.vars.id }}').val(data.id);
-                                selected_cars.push({
-                                    id          : $('#{{ form.car.id.vars.id }}').val(),
-                                    reg_plate   : $('#{{ form.car.regPlate.vars.id }}').val(),
-                                    brand       : $('#{{ form.car.brand.vars.id }}').val(),
-                                    year        : $('#{{ form.car.year.vars.id }}').val(),
-                                    mileage     : $('#{{ form.car.mileage.vars.id }}').val()
-                                });
+                                if(toPush == true) {
+                                    selected_cars.push({
+                                        id          : $('#{{ form.car.id.vars.id }}').val(),
+                                        reg_plate   : $('#{{ form.car.regPlate.vars.id }}').val(),
+                                        brand       : $('#{{ form.car.brand.vars.id }}').val(),
+                                        year        : $('#{{ form.car.year.vars.id }}').val(),
+                                        mileage     : $('#{{ form.car.mileage.vars.id }}').val()
+                                    });
+                                }
                                 successModal();
                             },
                             error: function(jqXHR) {
@@ -603,23 +606,32 @@
                 switch(currentStep) {
                     case 'Customer':
                         $('#modalMsg').modal('show');
-                        if($('#{{ form.customer.id.vars.id }}').val() != '') { ajaxRequest('{{ path('ajax_customer_edit') }}'); }
-                        else { errorModal('Veuillez selectionner le client à mettre à jour.'); }
+                        if(confirm("ATTENTION: Vous êtes sur le point de modifier un client existant. Etes-vous sûr de votre choix?\n\nPour créer un nouveau client:\n1. Cliquez sur le bouton \"Réinitialiser\"\n2. Remplissez le formulaire\n3. Cliquez sur le bouton \"Nouveau client\".")) {
+                            if($('#{{ form.customer.id.vars.id }}').val() != '') { ajaxRequest('{{ path('ajax_customer_edit') }}'); }
+                            else { errorModal('Veuillez selectionner le client à mettre à jour.'); }
+                        } else {
+                            $('#modalMsg').modal('hide');
+                        }
                         break;
                     case 'Car':
                         $('#modalMsg').modal('show');
-                        if($('#{{ form.car.id.vars.id }}').val() != '') {
-                            ajaxRequest('{{ path('ajax_car_edit') }}');
-                            for(i = 0; i < selected_cars.length; i++) {
-                                if(selected_cars[i].id == $('#{{ form.car.id.vars.id }}').val()) {
-                                    selected_cars[i].reg_plate   = $('#{{ form.car.regPlate.vars.id }}').val(),
-                                    selected_cars[i].brand       = $('#{{ form.car.brand.vars.id }}').val(),
-                                    selected_cars[i].year        = $('#{{ form.car.year.vars.id }}').val(),
-                                    selected_cars[i]. mileage    = $('#{{ form.car.mileage.vars.id }}').val()
+                        if(confirm("ATTENTION: Vous êtes sur le point de modifier un véhicule existant. Etes-vous sûr de votre choix?\n\nPour créer un nouveau client:\n1. Cliquez sur le bouton \"Réinitialiser\"\n2. Remplissez le formulaire\n3. Cliquez sur le bouton \"Nouveau véhicule\".")) {
+                            if($('#{{ form.car.id.vars.id }}').val() != '') {
+                                ajaxRequest('{{ path('ajax_car_edit') }}');
+                                for(i = 0; i < selected_cars.length; i++) {
+                                    console.log(selected_cars[i]);
+                                    if(selected_cars[i].id == $('#{{ form.car.id.vars.id }}').val()) {
+                                        selected_cars[i].reg_plate   = $('#{{ form.car.regPlate.vars.id }}').val(),
+                                        selected_cars[i].brand       = $('#{{ form.car.brand.vars.id }}').val(),
+                                        selected_cars[i].year        = $('#{{ form.car.year.vars.id }}').val(),
+                                        selected_cars[i]. mileage    = $('#{{ form.car.mileage.vars.id }}').val()
+                                    }
                                 }
                             }
+                            else { errorModal('Veuillez selectionner le véhicule à mettre à jour.'); }
+                        } else {
+                            $('#modalMsg').modal('hide');
                         }
-                        else { errorModal('Veuillez selectionner le véhicule à mettre à jour.'); }
                         break;
                 }
             });
