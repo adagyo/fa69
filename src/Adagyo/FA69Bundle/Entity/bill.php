@@ -41,6 +41,12 @@ class bill
     private $paymentMethod;
 
     /**
+     * @var integer
+     * @ORM\Column(name="hasOldPartVat", type="integer")
+     */
+    private $hasOldPartVat;
+
+    /**
      * @var float
      */
     private $totalExVATNewPart;
@@ -164,6 +170,24 @@ class bill
      */
     public function getPaymentMethod() {
         return $this->paymentMethod;
+    }
+
+    /**
+     * Set hasOldPartVat
+     * @param string $hasOldPartVat
+     * @return bill
+     */
+    public function setHasOldPartVat($hasOldPartVat) {
+        $this->hasOldPartVat = $hasOldPartVat;
+        return $this;
+    }
+
+    /**
+     * Get hasOldPartVat
+     * @return integer
+     */
+    public function getHasOldPartVat() {
+        return $this->hasOldPartVat;
     }
 
     /**
@@ -372,13 +396,21 @@ class bill
 
             $lineTotal = ($currPrice * (1 - $currDiscount / 100)) * $currQuantity;
             $this->totalDiscount += ($currPrice * $currQuantity) - $lineTotal;
-            if(strtolower($currQuality) != 'occasion') {
+            if($this->hasOldPartVat == 0) {
+                if(strtolower($currQuality) != 'occasion') {
+                    $this->totalVATNewPart += $lineTotal;
+                    $lineExVATTotal = $lineTotal / (1 + ($this->vatRate->getRate() / 100));
+                    $this->totalExVATNewPart += $lineExVATTotal;
+                    $this->VAT += $lineTotal - $lineExVATTotal;
+                } else {
+                    $this->totalExVATOldPart += $lineTotal;
+                }
+            } else {
                 $this->totalVATNewPart += $lineTotal;
                 $lineExVATTotal = $lineTotal / (1 + ($this->vatRate->getRate() / 100));
                 $this->totalExVATNewPart += $lineExVATTotal;
                 $this->VAT += $lineTotal - $lineExVATTotal;
-            } else {
-                $this->totalExVATOldPart += $lineTotal;
+                $this->totalExVATOldPart = -1;
             }
         }
     }

@@ -160,25 +160,25 @@
                             </tr>
                         {% endfor %}
                             <tr>
-                                <td colspan="3">Total HT Pièces NEUVES, MONTAGE et FRAIS DE PORT:</td>
+                                <td colspan="3">Total HT Pièces, MONTAGE et FRAIS DE PORT:</td>
                                 <td colspan="3"><div class="input-append">{{ form_widget(form.totalExVATNewPart, { 'attr' : { 'class' : 'uneditable-input span3 Customer Car Bill align-right' } }) }}<span class="add-on">€</span></div>                                </td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td colspan="3" id="updVAT">TVA ---% sur pièces NEUVES, MONTAGE et FRAIS DE PORT:</td>
+                                <td colspan="3" id="updVAT">TVA ---% sur pièces, MONTAGE et FRAIS DE PORT:</td>
                                 <td colspan="3"><div class="input-append">{{ form_widget(form.VAT, { 'attr' : { 'class' : 'uneditable-input span3 Customer Car Bill align-right' } }) }}<span class="add-on">€</span></div>                                </td>
                                 <td>&nbsp;</td>
                             </tr>
                             <tr>
-                                <td colspan="3">Total TTC Pièces NEUVES, MONTAGE et FRAIS DE PORT:</td>
+                                <td colspan="3">Total TTC Pièces, MONTAGE et FRAIS DE PORT:</td>
                                 <td colspan="3"><div class="input-append">{{ form_widget(form.totalVATNewPart, { 'attr' : { 'class' : 'uneditable-input span3 Customer Car Bill align-right' } }) }}<span class="add-on">€</span></div>                                </td>
                                 <td>&nbsp;</td>
                             </tr>
-                            <tr>
+                            <!--<tr>
                                 <td colspan="3">Total pièces OCCASION (Non soumises à TVA):</td>
                                 <td colspan="3"><div class="input-append">{{ form_widget(form.totalExVATOldPart, { 'attr' : { 'class' : 'uneditable-input span3 Customer Car Bill align-right' } }) }}<span class="add-on">€</span></div>                                </td>
                                 <td>&nbsp;</td>
-                            </tr>
+                            </tr>-->
                             <tr>
                                 <td colspan="3">Montant total en €uro de la REMISE:</td>
                                 <td colspan="3"><div class="input-append">{{ form_widget(form.totalDiscount, { 'attr' : { 'class' : 'uneditable-input span3 Customer Car Bill align-right' } }) }}<span class="add-on">€</span></div>                                </td>
@@ -379,14 +379,19 @@
                         lineTotal = (unitprice * (1 - discount / 100)) * quantity;
                         totalAmount += lineTotal;
                         totalDiscount += (unitprice * quantity) - lineTotal;
-                        if(quality != 'Occasion') {
+                        /*if(quality != 'Occasion') {
                             totalVATNewPart += lineTotal;
                             lineExVATTotal = lineTotal / (1 + (vatRate / 100));
                             totalExVATNewPart += lineExVATTotal;
                             VAT += lineTotal - lineExVATTotal;
                         } else {
                             totalExVATOldPart += lineTotal;
-                        }
+                        }*/
+                        totalVATNewPart += lineTotal;
+                        lineExVATTotal = lineTotal / (1 + (vatRate / 100));
+                        totalExVATNewPart += lineExVATTotal;
+                        VAT += lineTotal - lineExVATTotal;
+                        totalExVATOldPart = -1;
                     }
                 }
 
@@ -430,6 +435,8 @@
             }
 
             function ajaxRequest(postUrl) {
+                console.log("postUrl: ",postUrl);
+                console.log("currentStep: ",currentStep);
                 switch(currentStep) {
                     case 'Customer':
                         $.ajax({
@@ -513,7 +520,7 @@
                                 lines               : billLines,
                                 totalExVATNewPart   : $('#{{ form.totalExVATNewPart.vars.id }}').val(),
                                 totalVATNewPart     : $('#{{ form.totalVATNewPart.vars.id }}').val(),
-                                totalExVATOldPart   : $('#{{ form.totalExVATOldPart.vars.id }}').val(),
+                                totalExVATOldPart   : -1,
                                 totalDiscount       : $('#{{ form.totalDiscount.vars.id }}').val(),
                                 VAT                 : $('#{{ form.VAT.vars.id }}').val(),
                                 totalAmount         : $('#{{ form.totalAmount.vars.id }}').val(),
@@ -542,11 +549,11 @@
                                 carMileage          : $('#{{ form.car.mileage.vars.id }}').val(),
                                 date                : $('#{{ form.date.vars.id }}').val(),
                                 settlementDate      : $('#{{ form.settlementDate.vars.id }}').val(),
-                                paymentMethod      : $('#{{ form.paymentMethod.vars.id }}').val(),
+                                paymentMethod       : $('#{{ form.paymentMethod.vars.id }}').val(),
                                 lines               : billLines,
                                 totalExVATNewPart   : $('#{{ form.totalExVATNewPart.vars.id }}').val(),
                                 totalVATNewPart     : $('#{{ form.totalVATNewPart.vars.id }}').val(),
-                                totalExVATOldPart   : $('#{{ form.totalExVATOldPart.vars.id }}').val(),
+                                totalExVATOldPart   : -1,
                                 totalDiscount       : $('#{{ form.totalDiscount.vars.id }}').val(),
                                 VAT                 : $('#{{ form.VAT.vars.id }}').val(),
                                 totalAmount         : $('#{{ form.totalAmount.vars.id }}').val(),

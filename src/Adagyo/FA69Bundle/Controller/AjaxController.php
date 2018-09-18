@@ -254,6 +254,7 @@ class AjaxController extends Controller {
         $bill->setTotalExVATNewPart($request->get('totalExVATNewPart'));
         $bill->setTotalVATNewPart($request->get('totalVATNewPart'));
         $bill->setTotalExVATOldPart($request->get('totalExVATOldPart'));
+        $bill->setHasOldPartVat(1);
         $bill->setTotalDiscount($request->get('totalDiscount'));
         $bill->setVAT($request->get('VAT'));
         $bill->setTotalAmount($request->get('totalAmount'));

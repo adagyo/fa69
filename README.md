@@ -12,11 +12,7 @@ Installation:
 
     * git clone
     * php composer.phar update
-    * configurer app/config/parameters.yml
-    * php app/console doctrine:schema:create
-    * php app/console doctrine:fixtures:load
-    * charger les données à partir du job TALEND
-    * exécuter le script SQL suivant: UPDATE bill SET `vatRate_id` = (SELECT id FROM vat where isCurrent = 1);
+    * exécuter le script SQL suivant: alter table bill add column hasOldPartVat int default 0; 
 
 Problèmes connus:
 ------------------
